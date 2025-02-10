@@ -11,6 +11,8 @@ export class TreeNode {
   mod = 0
   X = 0
   Y = -1
+  positionedX = -1
+  positionedY = -1
 
   constructor(name: string, children: TreeNode[]) {
     this.name = name

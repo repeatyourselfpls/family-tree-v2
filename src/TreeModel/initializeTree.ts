@@ -1,29 +1,57 @@
+import { Edge, Node } from "@xyflow/react"
 import { TreeNode } from "./TreeNode"
 
-function execute(rootNode: TreeNode) {
+const RADIUS = 50
+const SPACING_X = RADIUS * 2 * 2
+const SPACING_Y = 150
+
+export type NodesAndEdges = {
+  nodes: Node[],
+  edges: Edge[]
+}
+
+export function retrieveNodesAndEdges(): NodesAndEdges {
+  const rootNode = O
+  const nodes: Node[] = []
+  const edges: Edge[] = []
 
   TreeNode.initializeNodes(rootNode, null, null, null, 0)
   TreeNode.calculateXMod(rootNode)
   TreeNode.finalizeX(rootNode, 0)
 
-  const traversedNodes = TreeNode.levelOrderTraversal(rootNode)
-  for (const [n, level] of traversedNodes) {
-    console.log(level, n.name, `(${n.X}, ${n.mod})`)
-  }
-  const positionedNodes = fitToScreen(structuredClone(traversedNodes), width, height)
+  const traversedNodes = fitToScreen(TreeNode.levelOrderTraversal(rootNode))
+  for (const n of traversedNodes) {
+    nodes.push(
+      {
+        id: n.name,
+        position: { x: n.positionedX, y: n.positionedY },
+        data: { label: n.name },
+      }
+    )
 
+    if (n.parent) {
+      edges.push(
+        {
+          id: `${n.parent}-${n.name}`,
+          source: n.parent.name,
+          target: n.name,
+          type: 'step',
+        }
+      )
+    }
+  }
+
+  return {edges, nodes}
 }
 
 function fitToScreen(
-  leveledNodes: [TreeNode, number][], 
-  width: number, 
-  height: number, 
+  leveledNodes: [TreeNode, number][],
 ) {
-  const startX = width / 2 - (leveledNodes[0][0].X * SPACING_X)
-  const startY = 100
+  const startX = 0
+  const startY = 0
   for (const [n, _] of leveledNodes) {
-    n.X = startX + (n.X * SPACING_X)
-    n.Y = startY + (n.Y * SPACING_Y)
+    n.positionedX = startX + (n.X * SPACING_X)
+    n.positionedY = startY + (n.Y * SPACING_Y)
   }
   return leveledNodes.map(([n, ]) => n)
 }
@@ -77,3 +105,24 @@ const HH = new TreeNode("HH", [WE, YI, KT, DN])
 const JW = new TreeNode("JW", [SB, BS, HH, BK])
 
 const TO = new TreeNode("TO", [JW])
+
+//
+
+const B = new TreeNode("B", [])
+const C = new TreeNode("C", [])
+const H = new TreeNode("H", [])
+const I = new TreeNode("I", [])
+const J = new TreeNode("J", [])
+const K = new TreeNode("K", [])
+const L = new TreeNode("L", [])
+
+const A = new TreeNode("A", [new TreeNode("sam", []), new TreeNode("test", [])])
+const D = new TreeNode("D", [B, C])
+const G = new TreeNode("G", [])
+const M = new TreeNode("M", [H, I, J, K, L])
+
+const E = new TreeNode("E", [A, D])
+const F = new TreeNode("F", [])
+const N = new TreeNode("N", [G, M])
+
+const O = new TreeNode("O", [E, F, N])
