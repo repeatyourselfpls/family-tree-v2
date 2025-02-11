@@ -1,5 +1,6 @@
 import { Edge, Node } from "@xyflow/react"
 import { TreeNode } from "./TreeNode"
+import { ButtonNode } from "../ButtonNode"
 
 const RADIUS = 50
 const SPACING_X = RADIUS * 2 * 2
@@ -12,7 +13,7 @@ export type NodesAndEdges = {
 
 export function retrieveNodesAndEdges(): NodesAndEdges {
   const rootNode = O
-  const nodes: Node[] = []
+  const nodes: ButtonNode[] = []
   const edges: Edge[] = []
 
   TreeNode.initializeNodes(rootNode, null, null, null, 0)
@@ -25,7 +26,12 @@ export function retrieveNodesAndEdges(): NodesAndEdges {
       {
         id: n.name,
         position: { x: n.positionedX, y: n.positionedY },
-        data: { label: n.name },
+        data: {
+          label: n.name,
+          x: n.X,
+          mod: n.mod
+        },
+        type: 'buttonNode',
       }
     )
 
@@ -49,7 +55,7 @@ function fitToScreen(
 ) {
   const startX = 0
   const startY = 0
-  for (const [n, _] of leveledNodes) {
+  for (const [n, ] of leveledNodes) {
     n.positionedX = startX + (n.X * SPACING_X)
     n.positionedY = startY + (n.Y * SPACING_Y)
   }

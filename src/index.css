@@ -8,3 +8,31 @@ body {
   width: 100vw;
   height: 100vh;
 }
+
+.editor-node {
+  height: 50px;
+  border: 1px solid #eee;
+  padding: 5px;
+  border-radius: 5px;
+  background: white;
+}
+ 
+.editor-node label {
+  display: block;
+  color: #777;
+  font-size: 12px;
+}
+
+.button-node {
+  min-height: 50px;
+  width: 100px;
+  background: skyblue;
+  padding: 5px;
+  border: 1px solid greenyellow;
+  border-radius: 5px;
+}
+
+.button-node:hover {
+  border: 1px solid rgb(103, 224, 103);
+  border-radius: 8px;
+}

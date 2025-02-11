@@ -2,8 +2,16 @@ import { useCallback, useState } from 'react';
 import { ReactFlow, Background, Controls, applyNodeChanges, applyEdgeChanges, addEdge } from '@xyflow/react';
 import '@xyflow/react/dist/style.css'
 import { retrieveNodesAndEdges } from './TreeModel/initializeTree';
+import { EditableNode } from './EditableNode';
+import ButtonNode from './ButtonNode';
+
+const nodeTypes = { 
+  editorNode: EditableNode,
+  buttonNode: ButtonNode,
+} // prevent re-renderings
 
 function App() {
+
   const { nodes: initialNodes, edges: initialEdges } = retrieveNodesAndEdges()
   const [nodes, setNodes] = useState(initialNodes)
   const [edges, setEdges] = useState(initialEdges)
@@ -21,18 +29,17 @@ function App() {
   )
 
   return (
-    <div style={{ height: '100%' }}>
-      <ReactFlow 
-        nodes={nodes} 
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-      >
-        <Background bgColor={'wheat'}/>
-        <Controls />
-      </ReactFlow>
-    </div>
+    <ReactFlow
+      nodes={nodes}
+      edges={edges}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      onConnect={onConnect}
+      nodeTypes={nodeTypes}
+    >
+      <Background bgColor={'wheat'} />
+      <Controls />
+    </ReactFlow>
   )
 }
 
