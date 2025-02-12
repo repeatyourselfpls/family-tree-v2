@@ -29,22 +29,24 @@ function App() {
 
   return (
     <>
-      <div id="flow">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        nodeTypes={nodeTypes}
-        proOptions={{ hideAttribution: true }}
-      >
-        <Background bgColor={'wheat'} />
-        <Controls />
-      </ReactFlow>
-      </div>
+      <div id="container">
+        <div id="flow">
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            nodeTypes={nodeTypes}
+            proOptions={{ hideAttribution: true }}
+          >
+            <Background bgColor={'wheat'} />
+            <Controls />
+          </ReactFlow>
+        </div>
 
-      <div id="sidebar"><Sidebar /></div>
+        <div id="sidebar"><Sidebar /></div>
+      </div>
     </>
   )
 }
