@@ -5,22 +5,31 @@ body {
 }
  
 #app {
+  position: relative;
+  /* overflow-x: hidden; */
+}
+
+#flow {
   width: 100vw;
   height: 100vh;
 }
 
-.editor-node {
-  height: 50px;
-  border: 1px solid #eee;
-  padding: 5px;
-  border-radius: 5px;
-  background: white;
+#sidebar {
+  position: absolute;
+  top: 0%;
+  left: 98vw;
+  width: 100%;
+  height: 100vh;
+  background-color: aquamarine;
 }
- 
-.editor-node label {
-  display: block;
-  color: #777;
-  font-size: 12px;
+
+#sidebar-expanded {
+  position: absolute;
+  top: 0%;
+  left: 78vw;
+  width: 100%;
+  height: 100vh;
+  background-color: aquamarine;
 }
 
 .button-node {
@@ -33,6 +42,6 @@ body {
 }
 
 .button-node:hover {
-  border: 1px solid rgb(103, 224, 103);
+  border: 1px solid rgb(0, 0, 0);
   border-radius: 8px;
 }

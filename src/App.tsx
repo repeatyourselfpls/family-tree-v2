@@ -2,11 +2,10 @@ import { useCallback, useState } from 'react';
 import { ReactFlow, Background, Controls, applyNodeChanges, applyEdgeChanges, addEdge } from '@xyflow/react';
 import '@xyflow/react/dist/style.css'
 import { retrieveNodesAndEdges } from './TreeModel/initializeTree';
-import { EditableNode } from './EditableNode';
-import ButtonNode from './ButtonNode';
+import ButtonNode from './components/ButtonNode';
+import Sidebar from './components/Sidebar';
 
-const nodeTypes = { 
-  editorNode: EditableNode,
+const nodeTypes = {
   buttonNode: ButtonNode,
 } // prevent re-renderings
 
@@ -29,17 +28,24 @@ function App() {
   )
 
   return (
-    <ReactFlow
-      nodes={nodes}
-      edges={edges}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-      nodeTypes={nodeTypes}
-    >
-      <Background bgColor={'wheat'} />
-      <Controls />
-    </ReactFlow>
+    <>
+      <div id="flow">
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        nodeTypes={nodeTypes}
+        proOptions={{ hideAttribution: true }}
+      >
+        <Background bgColor={'wheat'} />
+        <Controls />
+      </ReactFlow>
+      </div>
+
+      <div id="sidebar"><Sidebar /></div>
+    </>
   )
 }
 

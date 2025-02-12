@@ -1,6 +1,6 @@
 import { Edge, Node } from "@xyflow/react"
 import { TreeNode } from "./TreeNode"
-import { ButtonNode } from "../ButtonNode"
+import { ButtonNode } from "../components/ButtonNode"
 
 const RADIUS = 50
 const SPACING_X = RADIUS * 2 * 2
