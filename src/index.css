@@ -6,47 +6,22 @@ body {
 
 #container {
   display: grid;
-  grid-template-columns: 1fr 300px;
-  grid-template-rows: 1fr;
+  grid-template-columns: auto 0;
   height: 100vh;
   overflow: hidden;
-}
-
-#flow-half {
-  grid-column: 1 / 2;
-  grid-row: 1 / -1;
-}
-
-#flow-full {
-  grid-column: 1 / -1;
-  grid-row: 1 / -1;
+  transition: 300ms;
 }
 
 #sidebar {
-  grid-column: 2 / -1;
-  grid-row: 1 / -1;
+  background-color: aquamarine;
 }
 
-#sidebar-hidden {
+.container-show-sidebar {
+  grid-template-columns: auto 30% !important;
+}
+
+/* .sidebar-hide {
   display: none;
-}
-
-/* #sidebar {
-  position: absolute;
-  top: 0%;
-  left: 98vw;
-  width: 100%;
-  height: 100vh;
-  background-color: aquamarine;
-} */
-
-/* #sidebar-expanded {
-  position: absolute;
-  top: 0%;
-  left: 78vw;
-  width: 100%;
-  height: 100vh;
-  background-color: aquamarine;
 } */
 
 .button-node {

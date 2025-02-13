@@ -9,9 +9,19 @@ export type ButtonNode = Node<
   'buttonNode'
 >
 
+function editNode() {
+  const container = document.querySelector("#container")!
+
+  if (container?.classList.contains("container-show-sidebar")) {
+    container.classList.remove("container-show-sidebar")
+  } else {
+    container.classList.add("container-show-sidebar")
+  }
+}
+
 export default function ButtonNode(props: NodeProps<ButtonNode>) {
   return (
-    <div className="button-node">
+    <div className="button-node" onClick={editNode}>
       <Handle 
         type="target"
         position={Position.Top}

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ReactFlow, Background, Controls, applyNodeChanges, applyEdgeChanges, addEdge } from '@xyflow/react';
 import '@xyflow/react/dist/style.css'
 import { retrieveNodesAndEdges } from './TreeModel/initializeTree';
@@ -15,6 +15,8 @@ function App() {
   const [nodes, setNodes] = useState(initialNodes)
   const [edges, setEdges] = useState(initialEdges)
 
+  const [isSidebarVisible, setSidebarVisiblity] = useState(false)
+
   const onNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)), []
   )
@@ -27,27 +29,36 @@ function App() {
     (params) => setEdges((eds) => addEdge(params, eds)), []
   )
 
-  return (
-    <>
-      <div id="container">
-        <div id="flow-full">
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            nodeTypes={nodeTypes}
-            proOptions={{ hideAttribution: true }}
-          >
-            <Background bgColor={'wheat'} />
-            <Controls />
-          </ReactFlow>
-        </div>
+  const hideSidebar = useCallback(() => {
+    document.querySelector("#container")?.classList.remove("container-show-sidebar")
+  }, [])
 
-        <div id="sidebar-hidden"><Sidebar /></div>
-      </div>
-    </>
+  // useEffect(() => {
+  //   if (isSidebarVisible) {
+  //     document.querySelector("#container")?.classList.add("container-show-sidebar")
+  //   } else {
+  //     document.querySelector("#container")?.classList.remove("container-show-sidebar")
+  //   }
+  // }, [isSidebarVisible])
+
+  return (
+    <div id="container">
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        nodeTypes={nodeTypes}
+        proOptions={{ hideAttribution: true }}
+        onPaneClick={() => { hideSidebar() }}
+      >
+        <Background bgColor={'wheat'} />
+        <Controls />
+      </ReactFlow>
+
+      <Sidebar />
+    </div>
   )
 }
 
