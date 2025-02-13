@@ -11,10 +11,6 @@ body {
   height: 100vh;
   width: 100vw;
 }
- 
-#app {
-  /* overflow-x: hidden; */
-}
 
 #flow {
   grid-column: 1 / span 2;
