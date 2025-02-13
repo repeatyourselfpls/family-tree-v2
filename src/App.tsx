@@ -30,7 +30,7 @@ function App() {
   return (
     <>
       <div id="container">
-        <div id="flow">
+        <div id="flow-full">
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -45,7 +45,7 @@ function App() {
           </ReactFlow>
         </div>
 
-        <div id="sidebar"><Sidebar /></div>
+        <div id="sidebar-hidden"><Sidebar /></div>
       </div>
     </>
   )

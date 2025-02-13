@@ -143,7 +143,6 @@ export class TreeNode {
         const desiredX = leftNode.X + (distanceBetweenNodes * count)
         const offset = desiredX - middleNode.X
 
-        console.log(middleNode.name, middleNode.X, desiredX, offset)
         middleNode.X += offset
         middleNode.mod += offset
 
