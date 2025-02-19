@@ -1,21 +1,37 @@
-import { useCallback, useEffect, useState } from 'react';
-import { ReactFlow, Background, Controls, applyNodeChanges, applyEdgeChanges, addEdge } from '@xyflow/react';
+import { useCallback, useState } from 'react';
+import { ReactFlow, Background, Controls, applyNodeChanges, applyEdgeChanges, addEdge, Edge, Node } from '@xyflow/react';
 import '@xyflow/react/dist/style.css'
-import { retrieveNodesAndEdges } from './TreeModel/initializeTree';
+import { NodesAndEdges, retrieveNodesAndEdges, treeOne, treeTwo } from './TreeModel/initializeTree';
 import ButtonNode from './components/ButtonNode';
-import Sidebar from './components/Sidebar';
+
+import Sidebar, { SidebarState } from './components/Sidebar';
 
 const nodeTypes = {
   buttonNode: ButtonNode,
 } // prevent re-renderings
 
 function App() {
+  const rootNode = treeOne;
 
-  const { nodes: initialNodes, edges: initialEdges } = retrieveNodesAndEdges()
-  const [nodes, setNodes] = useState(initialNodes)
-  const [edges, setEdges] = useState(initialEdges)
+  const [sidebarState, setSidebarState] = useState({
+    visible: false,
+    selectedNode: null,
+    rootNodeRef: rootNode,
+    nodesAndEdgesUpdaterFn: null,
+  } as SidebarState)
 
-  const [isSidebarVisible, setSidebarVisiblity] = useState(false)
+  const updateSidebarState = (newSidebarState: SidebarState) => { 
+    setSidebarState(newSidebarState)
+  }
+
+  const updateNodesAndEdges = (nodesAndEdges: NodesAndEdges) => {
+    setNodes(nodesAndEdges.nodes)
+    setEdges(nodesAndEdges.edges)
+  } 
+  
+  const { nodes: calculatedNodes,  edges: calculatedEdges } = retrieveNodesAndEdges(rootNode, updateSidebarState, updateNodesAndEdges)
+  const [nodes, setNodes] = useState(calculatedNodes)
+  const [edges, setEdges] = useState(calculatedEdges)
 
   const onNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)), []
@@ -29,18 +45,6 @@ function App() {
     (params) => setEdges((eds) => addEdge(params, eds)), []
   )
 
-  const hideSidebar = useCallback(() => {
-    document.querySelector("#container")?.classList.remove("container-show-sidebar")
-  }, [])
-
-  // useEffect(() => {
-  //   if (isSidebarVisible) {
-  //     document.querySelector("#container")?.classList.add("container-show-sidebar")
-  //   } else {
-  //     document.querySelector("#container")?.classList.remove("container-show-sidebar")
-  //   }
-  // }, [isSidebarVisible])
-
   return (
     <div id="container">
       <ReactFlow
@@ -51,13 +55,13 @@ function App() {
         onConnect={onConnect}
         nodeTypes={nodeTypes}
         proOptions={{ hideAttribution: true }}
-        onPaneClick={() => { hideSidebar() }}
+        onPaneClick={() => setSidebarState({ visible: false, selectedNode: null })}
       >
         <Background bgColor={'wheat'} />
         <Controls />
       </ReactFlow>
 
-      <Sidebar />
+      <Sidebar sidebarState={sidebarState}/>
     </div>
   )
 }

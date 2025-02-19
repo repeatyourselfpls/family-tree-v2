@@ -1,42 +1,45 @@
 import { NodeProps, Node, Handle, Position } from '@xyflow/react';
+import { SidebarState } from './Sidebar';
+import { TreeNode } from '../TreeModel/TreeNode';
+import { NodesAndEdges } from '../TreeModel/initializeTree';
 
-export type ButtonNode = Node<
+export type ButtonNodeType = Node<
   {
-    x: number,
-    mod: number,
-    label: string,
+    nodeRef: TreeNode,
+    rootNodeRef: TreeNode,
+    sidebarStateUpdaterFn: (sidebarState: SidebarState) => void,
+    nodesAndEdgesUpdaterFn: (nodesAndEdges: NodesAndEdges) => void,
   },
   'buttonNode'
 >
 
-function editNode() {
-  const container = document.querySelector("#container")!
-
-  if (container?.classList.contains("container-show-sidebar")) {
-    container.classList.remove("container-show-sidebar")
-  } else {
-    container.classList.add("container-show-sidebar")
+export default function ButtonNode(props: NodeProps<ButtonNodeType>) {
+  function updateSidebarState() {
+    props.data.sidebarStateUpdaterFn({
+      selectedNode: props.data.nodeRef,
+      visible: true,
+      rootNodeRef: props.data.rootNodeRef,
+      nodesAndEdgesUpdaterFn: props.data.nodesAndEdgesUpdaterFn
+    })
   }
-}
 
-export default function ButtonNode(props: NodeProps<ButtonNode>) {
   return (
-    <div className="button-node" onClick={editNode}>
-      <Handle 
+    <div className="button-node" onClick={updateSidebarState}>
+      <Handle
         type="target"
         position={Position.Top}
         isConnectable={props.isConnectable}
       />
-      <div>      
-        {props.data?.label}
+      <div>
+        {props.data?.nodeRef.name}
       </div>
-      <div>      
-        {props.data?.x}
+      <div>
+        {props.data?.nodeRef.X}
       </div>
-      <div>      
-        {props.data?.mod}
+      <div>
+        {props.data?.nodeRef.mod}
       </div>
-      <Handle 
+      <Handle
         type="source"
         position={Position.Bottom}
         isConnectable={props.isConnectable}

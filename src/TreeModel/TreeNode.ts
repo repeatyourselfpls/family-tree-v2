@@ -27,7 +27,12 @@ export class TreeNode {
     nextSibling: TreeNode | null, 
     startingY: number
   ) {
+    node.mod = 0
+    node.positionedX = -1
+    node.positionedY = -1
+    node.X = 0
     node.Y = startingY
+    
     node.previousSibling = previousSibling
     node.nextSibling = nextSibling
     node.parent = parent

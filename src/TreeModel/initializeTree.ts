@@ -1,6 +1,7 @@
 import { Edge, Node } from "@xyflow/react"
 import { TreeNode } from "./TreeNode"
-import { ButtonNode } from "../components/ButtonNode"
+import { ButtonNodeType } from "../components/ButtonNode"
+import { SidebarState } from "../components/Sidebar"
 
 const RADIUS = 50
 const SPACING_X = RADIUS * 2 * 2
@@ -11,9 +12,12 @@ export type NodesAndEdges = {
   edges: Edge[]
 }
 
-export function retrieveNodesAndEdges(): NodesAndEdges {
-  const rootNode = O
-  const nodes: ButtonNode[] = []
+export function retrieveNodesAndEdges(
+  rootNode: TreeNode,
+  sidebarStateUpdaterFn: (state: SidebarState) => void,
+  nodesAndEdgesUpdaterFn: (NodesAndEdges: NodesAndEdges) => void,
+): NodesAndEdges {
+  const nodes: ButtonNodeType[] = []
   const edges: Edge[] = []
 
   TreeNode.initializeNodes(rootNode, null, null, null, 0)
@@ -27,9 +31,10 @@ export function retrieveNodesAndEdges(): NodesAndEdges {
         id: n.name,
         position: { x: n.positionedX, y: n.positionedY },
         data: {
-          label: n.name,
-          x: n.X,
-          mod: n.mod
+          nodeRef: n,
+          rootNodeRef: rootNode,
+          sidebarStateUpdaterFn: sidebarStateUpdaterFn,
+          nodesAndEdgesUpdaterFn: nodesAndEdgesUpdaterFn,
         },
         type: 'buttonNode',
       }
@@ -47,7 +52,7 @@ export function retrieveNodesAndEdges(): NodesAndEdges {
     }
   }
 
-  return {edges, nodes}
+  return { edges, nodes }
 }
 
 function fitToScreen(
@@ -55,11 +60,11 @@ function fitToScreen(
 ) {
   const startX = 0
   const startY = 0
-  for (const [n, ] of leveledNodes) {
+  for (const [n,] of leveledNodes) {
     n.positionedX = startX + (n.X * SPACING_X)
     n.positionedY = startY + (n.Y * SPACING_Y)
   }
-  return leveledNodes.map(([n, ]) => n)
+  return leveledNodes.map(([n,]) => n)
 }
 
 const sam = new TreeNode("sam", [])
@@ -110,7 +115,7 @@ const BK = new TreeNode("BK", [KX, QI, SE, WH])
 const HH = new TreeNode("HH", [WE, YI, KT, DN])
 const JW = new TreeNode("JW", [SB, BS, HH, BK])
 
-const TO = new TreeNode("TO", [JW])
+export const treeOne = new TreeNode("TO", [JW])
 
 //
 
@@ -122,7 +127,7 @@ const J = new TreeNode("J", [])
 const K = new TreeNode("K", [])
 const L = new TreeNode("L", [])
 
-const A = new TreeNode("A", [new TreeNode("sam", []), new TreeNode("test", [])])
+const A = new TreeNode("A", [])
 const D = new TreeNode("D", [B, C])
 const G = new TreeNode("G", [])
 const M = new TreeNode("M", [H, I, J, K, L])
@@ -131,4 +136,4 @@ const E = new TreeNode("E", [A, D])
 const F = new TreeNode("F", [])
 const N = new TreeNode("N", [G, M])
 
-const O = new TreeNode("O", [E, F, N])
+export const treeTwo = new TreeNode("O", [E, F, N])

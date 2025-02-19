@@ -20,10 +20,6 @@ body {
   grid-template-columns: auto 30% !important;
 }
 
-/* .sidebar-hide {
-  display: none;
-} */
-
 .button-node {
   min-height: 50px;
   width: 100px;
