@@ -30,6 +30,8 @@ function App() {
   } 
   
   const { nodes: calculatedNodes,  edges: calculatedEdges } = retrieveNodesAndEdges(rootNode, updateSidebarState, updateNodesAndEdges)
+ 
+  // calculate react nodes and edges here and outsource the x, y calculations outside
   const [nodes, setNodes] = useState(calculatedNodes)
   const [edges, setEdges] = useState(calculatedEdges)
 
