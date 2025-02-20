@@ -1,58 +1,16 @@
-import { Edge, Node } from "@xyflow/react"
 import { TreeNode } from "./TreeNode"
-import { ButtonNodeType } from "../components/ButtonNode"
-import { SidebarState } from "../components/Sidebar"
 
 const RADIUS = 50
 const SPACING_X = RADIUS * 2 * 2
 const SPACING_Y = 150
 
-export type NodesAndEdges = {
-  nodes: Node[],
-  edges: Edge[]
-}
-
-export function retrieveNodesAndEdges(
-  rootNode: TreeNode,
-  sidebarStateUpdaterFn: (state: SidebarState) => void,
-  nodesAndEdgesUpdaterFn: (NodesAndEdges: NodesAndEdges) => void,
-): NodesAndEdges {
-  const nodes: ButtonNodeType[] = []
-  const edges: Edge[] = []
-
+export function retrieveNodes(rootNode: TreeNode) {
   TreeNode.initializeNodes(rootNode, null, null, null, 0)
   TreeNode.calculateXMod(rootNode)
   TreeNode.finalizeX(rootNode, 0)
 
   const traversedNodes = fitToScreen(TreeNode.levelOrderTraversal(rootNode))
-  for (const n of traversedNodes) {
-    nodes.push(
-      {
-        id: n.name,
-        position: { x: n.positionedX, y: n.positionedY },
-        data: {
-          nodeRef: n,
-          rootNodeRef: rootNode,
-          sidebarStateUpdaterFn: sidebarStateUpdaterFn,
-          nodesAndEdgesUpdaterFn: nodesAndEdgesUpdaterFn,
-        },
-        type: 'buttonNode',
-      }
-    )
-
-    if (n.parent) {
-      edges.push(
-        {
-          id: `${n.parent}-${n.name}`,
-          source: n.parent.name,
-          target: n.name,
-          type: 'step',
-        }
-      )
-    }
-  }
-
-  return { edges, nodes }
+  return traversedNodes
 }
 
 function fitToScreen(

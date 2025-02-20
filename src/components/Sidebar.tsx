@@ -1,12 +1,10 @@
 import { useState } from "react"
 import { TreeNode } from "../TreeModel/TreeNode"
-import { NodesAndEdges, retrieveNodesAndEdges } from "../TreeModel/initializeTree"
+import { TreeNodeData } from "./ButtonNode"
 
 export type SidebarState = {
   visible: boolean,
-  selectedNode: TreeNode | null,
-  rootNodeRef: TreeNode | null,
-  nodesAndEdgesUpdaterFn: ((nodesAndEdges: NodesAndEdges) => void) | null,
+  selectedNode: TreeNodeData | null,
 }
 
 export type SidebarProps = {
@@ -28,10 +26,9 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
   function addDescendant(e) {
     e.preventDefault()
     
-    sidebarState.selectedNode?.children.push(new TreeNode(descendantValue, []))
-    sidebarState.nodesAndEdgesUpdaterFn(
-      retrieveNodesAndEdges(sidebarState.rootNodeRef, null, null)
-    )
+    const rootNode = sidebarState.selectedNode!.rootNodeRef
+    sidebarState.selectedNode?.nodeRef.children.push(new TreeNode(descendantValue, []))
+    sidebarState.selectedNode!.updateNodesAndEdgesFn(rootNode)
     console.log(descendantValue)
   }
 
@@ -41,9 +38,9 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
 
   return (
     <div id="sidebar">
-      <div>{previousSidebarState.selectedNode?.name}</div>
-      <div>{previousSidebarState.selectedNode?.X}</div>
-      <div>{previousSidebarState.selectedNode?.mod}</div>
+      <div>{previousSidebarState.selectedNode?.nodeRef.name}</div>
+      <div>{previousSidebarState.selectedNode?.nodeRef.X}</div>
+      <div>{previousSidebarState.selectedNode?.nodeRef.mod}</div>
 
 
       <label htmlFor="descendant-name">Descendant Name</label>

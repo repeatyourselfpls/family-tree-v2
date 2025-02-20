@@ -1,25 +1,24 @@
 import { NodeProps, Node, Handle, Position } from '@xyflow/react';
 import { SidebarState } from './Sidebar';
 import { TreeNode } from '../TreeModel/TreeNode';
-import { NodesAndEdges } from '../TreeModel/initializeTree';
+
+export type TreeNodeData = {
+  nodeRef: TreeNode,
+  rootNodeRef: TreeNode,
+  updateSidebarStateFn: (sidebarState: SidebarState) => void,
+  updateNodesAndEdgesFn: (rootNode: TreeNode) => void,
+}
 
 export type ButtonNodeType = Node<
-  {
-    nodeRef: TreeNode,
-    rootNodeRef: TreeNode,
-    sidebarStateUpdaterFn: (sidebarState: SidebarState) => void,
-    nodesAndEdgesUpdaterFn: (nodesAndEdges: NodesAndEdges) => void,
-  },
+  TreeNodeData,
   'buttonNode'
 >
 
 export default function ButtonNode(props: NodeProps<ButtonNodeType>) {
   function updateSidebarState() {
-    props.data.sidebarStateUpdaterFn({
-      selectedNode: props.data.nodeRef,
+    props.data.updateSidebarStateFn({
+      selectedNode: props.data,
       visible: true,
-      rootNodeRef: props.data.rootNodeRef,
-      nodesAndEdgesUpdaterFn: props.data.nodesAndEdgesUpdaterFn
     })
   }
 

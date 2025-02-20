@@ -1,37 +1,97 @@
 import { useCallback, useState } from 'react';
 import { ReactFlow, Background, Controls, applyNodeChanges, applyEdgeChanges, addEdge, Edge, Node } from '@xyflow/react';
 import '@xyflow/react/dist/style.css'
-import { NodesAndEdges, retrieveNodesAndEdges, treeOne, treeTwo } from './TreeModel/initializeTree';
-import ButtonNode from './components/ButtonNode';
+import { retrieveNodes, treeTwo } from './TreeModel/initializeTree';
+import ButtonNode, { TreeNodeData } from './components/ButtonNode';
 
 import Sidebar, { SidebarState } from './components/Sidebar';
+import { TreeNode } from './TreeModel/TreeNode';
 
 const nodeTypes = {
   buttonNode: ButtonNode,
 } // prevent re-renderings
 
 function App() {
-  const rootNode = treeOne;
+  const rootNode = treeTwo;
 
   const [sidebarState, setSidebarState] = useState({
     visible: false,
     selectedNode: null,
-    rootNodeRef: rootNode,
-    nodesAndEdgesUpdaterFn: null,
   } as SidebarState)
 
-  const updateSidebarState = (newSidebarState: SidebarState) => { 
+  const updateSidebarState = (newSidebarState: SidebarState) => {
     setSidebarState(newSidebarState)
   }
 
-  const updateNodesAndEdges = (nodesAndEdges: NodesAndEdges) => {
-    setNodes(nodesAndEdges.nodes)
-    setEdges(nodesAndEdges.edges)
-  } 
+  const updateNodesAndEdges = (rootNode: TreeNode) => {  
+    console.log('this loopin')
+    const traversedNodes = retrieveNodes(rootNode)
+    const calculatedNodes: Node[] = []
+    const calculatedEdges: Edge[] = [] 
   
-  const { nodes: calculatedNodes,  edges: calculatedEdges } = retrieveNodesAndEdges(rootNode, updateSidebarState, updateNodesAndEdges)
- 
-  // calculate react nodes and edges here and outsource the x, y calculations outside
+    for (const n of traversedNodes) {
+      const nodeData: TreeNodeData = {
+        nodeRef: n,
+        rootNodeRef: rootNode,
+        updateSidebarStateFn: updateSidebarState,
+        updateNodesAndEdgesFn: updateNodesAndEdges,
+      }
+      calculatedNodes.push(
+        {
+          id: n.name,
+          position: { x: n.positionedX, y: n.positionedY },
+          data: nodeData,
+          type: 'buttonNode',
+        }
+      )
+  
+      if (n.parent) {
+        calculatedEdges.push(
+          {
+            id: `${n.parent}-${n.name}`,
+            source: n.parent.name,
+            target: n.name,
+            type: 'step',
+          }
+        )
+      }
+    }
+    setNodes(calculatedNodes)
+    setEdges(calculatedEdges)
+  }
+
+  const traversedNodes = retrieveNodes(rootNode)
+  const calculatedNodes: Node[] = []
+  const calculatedEdges: Edge[] = [] 
+
+  for (const n of traversedNodes) {
+    const nodeData: TreeNodeData = {
+      nodeRef: n,
+      rootNodeRef: rootNode,
+      updateSidebarStateFn: updateSidebarState,
+      updateNodesAndEdgesFn: updateNodesAndEdges,
+    }
+    calculatedNodes.push(
+      {
+        id: n.name,
+        position: { x: n.positionedX, y: n.positionedY },
+        data: nodeData,
+        type: 'buttonNode',
+      }
+    )
+
+    if (n.parent) {
+      calculatedEdges.push(
+        {
+          id: `${n.parent}-${n.name}`,
+          source: n.parent.name,
+          target: n.name,
+          type: 'step',
+        }
+      )
+    }
+  }
+
   const [nodes, setNodes] = useState(calculatedNodes)
   const [edges, setEdges] = useState(calculatedEdges)
 
@@ -63,7 +123,7 @@ function App() {
         <Controls />
       </ReactFlow>
 
-      <Sidebar sidebarState={sidebarState}/>
+      <Sidebar sidebarState={sidebarState} />
     </div>
   )
 }
