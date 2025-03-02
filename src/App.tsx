@@ -118,6 +118,7 @@ function App() {
         nodeTypes={nodeTypes}
         proOptions={{ hideAttribution: true }}
         onPaneClick={() => setSidebarState({ visible: false, selectedNode: null })}
+        fitView={true}
       >
         <Background bgColor={'wheat'} />
         <Controls />

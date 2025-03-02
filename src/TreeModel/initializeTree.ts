@@ -91,7 +91,7 @@ const G = new TreeNode("G", [])
 const M = new TreeNode("M", [H, I, J, K, L])
 
 const E = new TreeNode("E", [A, D])
-const F = new TreeNode("F", [])
+const F = new TreeNode("F", [new TreeNode("sd", [])])
 const N = new TreeNode("N", [G, M])
 
 export const treeTwo = new TreeNode("O", [E, F, N])

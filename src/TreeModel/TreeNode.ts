@@ -117,7 +117,7 @@ export class TreeNode {
       const rightContour = TreeNode.getRightContour(leftSibling)
       const depth = Math.min(leftContour.length, rightContour.length)
 
-      for (let d = 0; d < depth; d++) {
+      for (let d = 1; d < depth; d++) {
         const distance = leftContour[d][1] - rightContour[d][1]
         if (distance + shiftValue < minDistance) {
           shiftValue = Math.max(minDistance - distance, shiftValue) // aggregate the max shift value for each level of this sibling
@@ -194,8 +194,8 @@ export class TreeNode {
         contour.push([n, n.X + modSum])
       }
 
-      for (const child of n.children.reverse()) {
-        queue.push([child, level + 1, modSum + n.mod])
+      for (let i = n.children.length-1; i > 0; i--) {
+        queue.push([n.children[i], level + 1, modSum + n.mod])
       }
     }
 
