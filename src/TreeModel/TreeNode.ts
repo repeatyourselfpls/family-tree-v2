@@ -5,6 +5,7 @@ export class TreeNode {
 
   name = ''
   children: TreeNode[] = []
+  spouse: TreeNode | null = null
   parent: TreeNode | null = null
   previousSibling: TreeNode | null = null
   nextSibling: TreeNode | null = null
@@ -14,9 +15,10 @@ export class TreeNode {
   positionedX = -1
   positionedY = -1
 
-  constructor(name: string, children: TreeNode[]) {
+  constructor(name: string, children: TreeNode[], spouse: TreeNode | null = null) {
     this.name = name
     this.children = children
+    this.spouse = spouse
   }
 
   // Attaches previous siblings and a base Y for each level 
@@ -76,6 +78,38 @@ export class TreeNode {
     }
 
     // check if sibling subtrees clash, adjust X and mod if so
+    if (node.children.length) {
+      TreeNode.checkConflicts2(node)
+    }
+  }
+
+  static calculateXModWithSpouse(node: TreeNode) {
+    for (const child of node.children) {
+      this.calculateXMod(child)
+    }
+
+    if (node.isLeafNode()) {
+      if (!node.previousSibling) {
+        node.X = 0
+      } else {
+        node.X = node.previousSibling.X + TreeNode.NODE_SIZE + TreeNode.SIBLING_DISTANCE
+      }
+    } else if (node.children.length == 1) {
+      if (!node.previousSibling) {
+        node.X = node.getLeftMostChildNode().X
+      } else {
+        node.X = node.previousSibling.X + TreeNode.NODE_SIZE + TreeNode.SIBLING_DISTANCE
+        node.mod = node.X - node.getLeftMostChildNode().X
+      }
+    } else {
+      if (!node.previousSibling) {
+        node.X = (node.getLeftMostChildNode().X + node.getRightMostChildNode().X) / 2
+      } else {
+        node.X = node.previousSibling.X + TreeNode.NODE_SIZE + TreeNode.SIBLING_DISTANCE
+        node.mod = node.X - (node.getLeftMostChildNode().X + node.getRightMostChildNode().X) / 2 // currentX - desired
+      }
+    }
+
     if (node.children.length) {
       TreeNode.checkConflicts2(node)
     }
@@ -143,7 +177,7 @@ export class TreeNode {
       const distanceBetweenNodes = (rightNode.X - leftNode.X) / (numNodesInBetween + 1)
       let count = 1
       for (let i = leftIndex + 1; i < rightIndex; i++) {
-        const middleNode = leftNode.parent?.children[i] || new TreeNode("", [])
+        const middleNode = leftNode.parent!.children[i]!
 
         const desiredX = leftNode.X + (distanceBetweenNodes * count)
         const offset = desiredX - middleNode.X
@@ -194,8 +228,8 @@ export class TreeNode {
         contour.push([n, n.X + modSum])
       }
 
-      for (let i = n.children.length-1; i > 0; i--) {
-        queue.push([n.children[i], level + 1, modSum + n.mod])
+      for (const child of n.children.slice().reverse()) {
+        queue.push([child, level + 1, modSum + n.mod])
       }
     }
 
