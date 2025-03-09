@@ -6,7 +6,7 @@ const SPACING_Y = 150
 
 export function retrieveNodes(rootNode: TreeNode) {
   TreeNode.initializeNodes(rootNode, null, null, null, 0)
-  TreeNode.calculateXMod(rootNode)
+  TreeNode.calculateXModWithSpouse(rootNode)
   TreeNode.finalizeX(rootNode, 0)
 
   const traversedNodes = fitToScreen(TreeNode.levelOrderTraversal(rootNode))
@@ -78,14 +78,14 @@ export const treeOne = new TreeNode("TO", [JW])
 //
 
 const B = new TreeNode("B", [])
-const C = new TreeNode("C", [])
-const H = new TreeNode("H", [])
+const C = new TreeNode("C", [], new TreeNode("c spouse", []))
+const H = new TreeNode("H", [], new TreeNode("h spouse", []))
 const I = new TreeNode("I", [])
 const J = new TreeNode("J", [])
 const K = new TreeNode("K", [])
 const L = new TreeNode("L", [])
 
-const A = new TreeNode("A", [])
+const A = new TreeNode("A", [], new TreeNode("a spouse", []))
 const D = new TreeNode("D", [B, C])
 const G = new TreeNode("G", [])
 const M = new TreeNode("M", [H, I, J, K, L])
