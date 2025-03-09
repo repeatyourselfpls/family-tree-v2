@@ -111,14 +111,18 @@ export class TreeNode {
         node.X = node.getLeftMostChildNode().X
       } else {
         node.X = node.previousSibling.X + minDist
-        node.mod = node.X - node.getLeftMostChildNode().X // effectively node.X
+        const center = node.spouse ? (node.X + node.X + TreeNode.COUPLE_DISTANCE) / 2
+          : node.X
+        node.mod = center - node.getLeftMostChildNode().X // effectively node.X or center
       }
     } else {
       if (!node.previousSibling) {
         node.X = (node.getLeftMostChildNode().X + node.getRightMostChildNode().X) / 2
       } else {
         node.X = node.previousSibling.X + minDist
-        node.mod = node.X - (node.getLeftMostChildNode().X + node.getRightMostChildNode().X) / 2 // currentX - desired
+        const center = node.spouse ? (node.X + node.X + TreeNode.COUPLE_DISTANCE) / 2
+        : node.X
+        node.mod = center - (node.getLeftMostChildNode().X + node.getRightMostChildNode().X) / 2 // currentX - desired
       }
     }
 
