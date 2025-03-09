@@ -2,6 +2,7 @@ export class TreeNode {
   static NODE_SIZE = 1
   static SIBLING_DISTANCE = 0
   static TREE_DISTANCE = 0
+  static COUPLE_DISTANCE = 1 // should be <= (node_size + sibling_distance) for aesthetics
 
   name = ''
   children: TreeNode[] = []
@@ -34,12 +35,19 @@ export class TreeNode {
     node.positionedY = -1
     node.X = 0
     node.Y = startingY
+    if (node.spouse) {
+      node.spouse.Y = startingY
+      node.spouse.X = -1
+      node.spouse.mod = -1
+      node.spouse.positionedX = -1
+      node.spouse.positionedY = -1
+    }
     
     node.previousSibling = previousSibling
     node.nextSibling = nextSibling
     node.parent = parent
     for (let i = 0; i < node.children.length; i++) {
-      this.initializeNodes(
+      TreeNode.initializeNodes(
         node.children[i],
         node,
         i > 0 ? node.children[i-1] : null,
@@ -52,7 +60,7 @@ export class TreeNode {
   // Calculates the X and Mod bottom up
   static calculateXMod(node: TreeNode) {
     for (const child of node.children) {
-      this.calculateXMod(child)
+      TreeNode.calculateXMod(child)
     }
 
     if (node.isLeafNode()) {
@@ -85,27 +93,31 @@ export class TreeNode {
 
   static calculateXModWithSpouse(node: TreeNode) {
     for (const child of node.children) {
-      this.calculateXMod(child)
+      TreeNode.calculateXModWithSpouse(child)
     }
+
+    const minDist = node.previousSibling?.spouse
+      ? TreeNode.NODE_SIZE + TreeNode.SIBLING_DISTANCE + TreeNode.COUPLE_DISTANCE 
+      : TreeNode.NODE_SIZE + TreeNode.SIBLING_DISTANCE
 
     if (node.isLeafNode()) {
       if (!node.previousSibling) {
         node.X = 0
       } else {
-        node.X = node.previousSibling.X + TreeNode.NODE_SIZE + TreeNode.SIBLING_DISTANCE
+        node.X = node.previousSibling.X + minDist
       }
     } else if (node.children.length == 1) {
       if (!node.previousSibling) {
         node.X = node.getLeftMostChildNode().X
       } else {
-        node.X = node.previousSibling.X + TreeNode.NODE_SIZE + TreeNode.SIBLING_DISTANCE
-        node.mod = node.X - node.getLeftMostChildNode().X
+        node.X = node.previousSibling.X + minDist
+        node.mod = node.X - node.getLeftMostChildNode().X // effectively node.X
       }
     } else {
       if (!node.previousSibling) {
         node.X = (node.getLeftMostChildNode().X + node.getRightMostChildNode().X) / 2
       } else {
-        node.X = node.previousSibling.X + TreeNode.NODE_SIZE + TreeNode.SIBLING_DISTANCE
+        node.X = node.previousSibling.X + minDist
         node.mod = node.X - (node.getLeftMostChildNode().X + node.getRightMostChildNode().X) / 2 // currentX - desired
       }
     }
@@ -148,7 +160,7 @@ export class TreeNode {
       let shiftValue = 0 // only shift after u find the max shift distance for each level of sibling
 
       const leftContour = TreeNode.getLeftContour(node)
-      const rightContour = TreeNode.getRightContour(leftSibling)
+      const rightContour = TreeNode.getRightContourWithSpouse(leftSibling)
       const depth = Math.min(leftContour.length, rightContour.length)
 
       for (let d = 1; d < depth; d++) {
@@ -236,6 +248,29 @@ export class TreeNode {
     return contour
   }
 
+  // same as @getRightContour, accounts for spouse being part of the contour
+  static getRightContourWithSpouse(node: TreeNode) {
+    const contour: [TreeNode, calculatedX: number][] = []
+    const queue: [TreeNode, level: number, modSum: number][] = [[node, 0, 0]]
+    let nextLevel = 0
+
+    while (queue.length) {
+      const [n, level, modSum] = queue.splice(0, 1)[0]
+      if (level === nextLevel) {
+        nextLevel += 1
+        const p: [TreeNode, calculatedX: number] = n.spouse ? [n.spouse, n.X + modSum + TreeNode.COUPLE_DISTANCE]
+          : [n, n.X + modSum]
+        contour.push(p)
+      }
+
+      for (const child of n.children.slice().reverse()) {
+        queue.push([child, level + 1, modSum + n.mod])
+      }
+    }
+    
+    return contour
+  }
+
   // if a node falls off the screen, shift nodes so it's visible
   static ensureChildrenOnScreen(node: TreeNode) {
     const leftContour = TreeNode.getLeftContour(node)
@@ -256,7 +291,7 @@ export class TreeNode {
     modSum += node.mod
 
     for (const child of node.children) {
-      this.finalizeX(child, modSum)
+      TreeNode.finalizeX(child, modSum)
     }
   }
 
