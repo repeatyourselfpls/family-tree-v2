@@ -23,12 +23,12 @@ function App() {
     setSidebarState(newSidebarState)
   }
 
-  const updateNodesAndEdges = (rootNode: TreeNode) => {  
+  const updateNodesAndEdges = (rootNode: TreeNode) => {
     console.log('this loopin')
     const traversedNodes = retrieveNodes(rootNode)
     const calculatedNodes: Node[] = []
-    const calculatedEdges: Edge[] = [] 
-  
+    const calculatedEdges: Edge[] = []
+
     for (const n of traversedNodes) {
       const nodeData: TreeNodeData = {
         nodeRef: n,
@@ -44,7 +44,7 @@ function App() {
           type: 'buttonNode',
         }
       )
-  
+
       if (n.parent) {
         calculatedEdges.push(
           {
@@ -62,7 +62,7 @@ function App() {
 
   const traversedNodes = retrieveNodes(rootNode)
   const calculatedNodes: Node[] = []
-  const calculatedEdges: Edge[] = [] 
+  const calculatedEdges: Edge[] = []
 
   for (const n of traversedNodes) {
     const nodeData: TreeNodeData = {
