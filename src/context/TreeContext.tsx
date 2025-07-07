@@ -2,7 +2,7 @@ import { createContext, useContext } from "react";
 import { SidebarState } from "../components/Sidebar"
 import { TreeNode } from "../TreeModel/TreeNode";
 
-type TreeContextType = {
+export type TreeContextType = {
   updateSidebarState: (newState: SidebarState) => void
   addDescendant: (parentNode: TreeNode, descendantName: string) => void
   updateNodeName: (nodeToUpdate: TreeNode, newName: string) => void

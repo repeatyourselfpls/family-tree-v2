@@ -6,7 +6,7 @@ import ButtonNode, { TreeNodeData } from './components/ButtonNode';
 
 import Sidebar, { SidebarState } from './components/Sidebar';
 import { TreeNode } from './TreeModel/TreeNode';
-import { TreeContext } from './context/TreeContext';
+import { TreeContext, TreeContextType } from './context/TreeContext';
 
 const nodeTypes = {
   buttonNode: ButtonNode,
@@ -54,7 +54,7 @@ function App() {
     }
     setNodes(calculatedNodes)
     setEdges(calculatedEdges)
-  }, []) // Doesn't this function technically depend on each of the nodes, as it needs to be recalculated each time the nodes change? 
+  }, []) 
 
   useEffect(() => {
     calculateLayout(rootNodeRef.current)
@@ -67,12 +67,18 @@ function App() {
     calculateLayout(rootNodeRef.current)
 
     setSidebarState({ visible: false, selectedNode: null })
-  }, [calculateLayout]) // What does this dependency mean for useCallback? I thought the addDescendant should just run calculateLayout?
+  }, [calculateLayout])
 
   const updateNodeName = useCallback((nodeToUpdate: TreeNode, newName: string) => {
     nodeToUpdate.name = newName
     calculateLayout(rootNodeRef.current)
   }, [calculateLayout])
+
+  const contextValue: TreeContextType = {
+    updateSidebarState: setSidebarState,
+    addDescendant,
+    updateNodeName
+  }
 
   const onNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)), []
@@ -85,12 +91,6 @@ function App() {
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)), []
   )
-
-  const contextValue = {
-    updateSidebarState: setSidebarState,
-    addDescendant,
-    updateNodeName
-  }
 
   return (
     <TreeContext.Provider value={contextValue}>
