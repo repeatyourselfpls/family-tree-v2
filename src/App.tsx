@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ReactFlow, Background, Controls, applyNodeChanges, applyEdgeChanges, addEdge, Edge, Node } from '@xyflow/react';
 import '@xyflow/react/dist/style.css'
 import { retrieveNodes, treeTwo } from './TreeModel/initializeTree';
@@ -6,25 +6,24 @@ import ButtonNode, { TreeNodeData } from './components/ButtonNode';
 
 import Sidebar, { SidebarState } from './components/Sidebar';
 import { TreeNode } from './TreeModel/TreeNode';
+import { TreeContext } from './context/TreeContext';
 
 const nodeTypes = {
   buttonNode: ButtonNode,
 } // prevent re-renderings
 
 function App() {
-  const rootNode = treeTwo;
+  const rootNodeRef = useRef(treeTwo)
+
+  const [nodes, setNodes] = useState([] as Node[])
+  const [edges, setEdges] = useState([] as Edge[])
 
   const [sidebarState, setSidebarState] = useState({
     visible: false,
     selectedNode: null,
   } as SidebarState)
 
-  const updateSidebarState = (newSidebarState: SidebarState) => {
-    setSidebarState(newSidebarState)
-  }
-
-  const updateNodesAndEdges = (rootNode: TreeNode) => {
-    console.log('this loopin')
+  const calculateLayout = useCallback((rootNode: TreeNode) => {
     const traversedNodes = retrieveNodes(rootNode)
     const calculatedNodes: Node[] = []
     const calculatedEdges: Edge[] = []
@@ -32,9 +31,6 @@ function App() {
     for (const n of traversedNodes) {
       const nodeData: TreeNodeData = {
         nodeRef: n,
-        rootNodeRef: rootNode,
-        updateSidebarStateFn: updateSidebarState,
-        updateNodesAndEdgesFn: updateNodesAndEdges,
       }
       calculatedNodes.push(
         {
@@ -58,42 +54,25 @@ function App() {
     }
     setNodes(calculatedNodes)
     setEdges(calculatedEdges)
-  }
+  }, []) // Doesn't this function technically depend on each of the nodes, as it needs to be recalculated each time the nodes change? 
 
-  const traversedNodes = retrieveNodes(rootNode)
-  const calculatedNodes: Node[] = []
-  const calculatedEdges: Edge[] = []
+  useEffect(() => {
+    calculateLayout(rootNodeRef.current)
+  }, [calculateLayout])
 
-  for (const n of traversedNodes) {
-    const nodeData: TreeNodeData = {
-      nodeRef: n,
-      rootNodeRef: rootNode,
-      updateSidebarStateFn: updateSidebarState,
-      updateNodesAndEdgesFn: updateNodesAndEdges,
-    }
-    calculatedNodes.push(
-      {
-        id: n.name,
-        position: { x: n.positionedX, y: n.positionedY },
-        data: nodeData,
-        type: 'buttonNode',
-      }
-    )
+  const addDescendant = useCallback((parentNode: TreeNode, descendantName: string) => {
+    const newChild = new TreeNode(descendantName, [])
+    parentNode.children.push(newChild)
 
-    if (n.parent) {
-      calculatedEdges.push(
-        {
-          id: `${n.parent}-${n.name}`,
-          source: n.parent.name,
-          target: n.name,
-          type: 'step',
-        }
-      )
-    }
-  }
+    calculateLayout(rootNodeRef.current)
 
-  const [nodes, setNodes] = useState(calculatedNodes)
-  const [edges, setEdges] = useState(calculatedEdges)
+    setSidebarState({ visible: false, selectedNode: null })
+  }, [calculateLayout]) // What does this dependency mean for useCallback? I thought the addDescendant should just run calculateLayout?
+
+  const updateNodeName = useCallback((nodeToUpdate: TreeNode, newName: string) => {
+    nodeToUpdate.name = newName
+    calculateLayout(rootNodeRef.current)
+  }, [calculateLayout])
 
   const onNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)), []
@@ -107,25 +86,35 @@ function App() {
     (params) => setEdges((eds) => addEdge(params, eds)), []
   )
 
-  return (
-    <div id="container">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        nodeTypes={nodeTypes}
-        proOptions={{ hideAttribution: true }}
-        onPaneClick={() => setSidebarState({ visible: false, selectedNode: null })}
-        fitView={true}
-      >
-        <Background bgColor={'wheat'} />
-        <Controls />
-      </ReactFlow>
+  const contextValue = {
+    updateSidebarState: setSidebarState,
+    addDescendant,
+    updateNodeName
+  }
 
-      <Sidebar sidebarState={sidebarState} />
-    </div>
+  return (
+    <TreeContext.Provider value={contextValue}>
+      <div id="container" className={sidebarState.visible ? "container-show-sidebar" : ""}>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          nodeTypes={nodeTypes}
+          proOptions={{ hideAttribution: true }}
+          onPaneClick={() => setSidebarState({ visible: false, selectedNode: null })}
+          fitView={true}
+        >
+          <Background bgColor={'wheat'} />
+          <Controls />
+        </ReactFlow>
+
+        <Sidebar
+          sidebarState={sidebarState}
+        />
+      </div>
+    </TreeContext.Provider>
   )
 }
 

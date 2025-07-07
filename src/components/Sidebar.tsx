@@ -1,6 +1,6 @@
-import { useState } from "react"
-import { TreeNode } from "../TreeModel/TreeNode"
+import { useEffect, useState } from "react"
 import { TreeNodeData } from "./ButtonNode"
+import { useTree } from "../context/TreeContext"
 
 export type SidebarState = {
   visible: boolean,
@@ -12,24 +12,33 @@ export type SidebarProps = {
 }
 
 export default function Sidebar({ sidebarState }: SidebarProps) {
-  const [previousSidebarState, setPreviousSidebarState] = useState(sidebarState)
-  const [descendantValue, setDescendantValue] = useState('')
+  const { addDescendant, updateNodeName } = useTree()
 
-  if (previousSidebarState !== sidebarState) {
-    if (previousSidebarState.visible !== sidebarState.visible) {
-      toggleSidebar()
-    }
-    setPreviousSidebarState(sidebarState)
+  const [descendantValue, setDescendantValue] = useState('')
+  const [nameValue, setNameValue] = useState('')
+
+  useEffect(() => {
+    setNameValue(sidebarState.selectedNode?.nodeRef.name || '')
     setDescendantValue('')
+  }, [sidebarState.selectedNode])
+
+  function handleAddDescendant(e) {
+    e.preventDefault()
+
+    if (sidebarState.selectedNode && descendantValue) {
+      addDescendant(sidebarState.selectedNode.nodeRef, descendantValue)
+    }
   }
 
-  function addDescendant(e) {
+  function handleNameUpdate(e) {
     e.preventDefault()
-    
-    const rootNode = sidebarState.selectedNode!.rootNodeRef
-    sidebarState.selectedNode?.nodeRef.children.push(new TreeNode(descendantValue, []))
-    sidebarState.selectedNode!.updateNodesAndEdgesFn(rootNode)
-    console.log(descendantValue)
+    if (sidebarState.selectedNode && nameValue) {
+      updateNodeName(sidebarState.selectedNode.nodeRef, nameValue)
+    }
+  }
+
+  function handleNameChange(e) {
+    setNameValue(e.target.value)
   }
 
   function handleInputChange(e) {
@@ -38,35 +47,38 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
 
   return (
     <div id="sidebar">
-      <div>{previousSidebarState.selectedNode?.nodeRef.name}</div>
-      <div>{previousSidebarState.selectedNode?.nodeRef.X}</div>
-      <div>{previousSidebarState.selectedNode?.nodeRef.mod}</div>
+      <h3>{sidebarState.selectedNode?.nodeRef.name}</h3>
+      <div>X: {sidebarState.selectedNode?.nodeRef.X} | Y: {sidebarState.selectedNode?.nodeRef.Y}</div>
+      <div>MOD: {sidebarState.selectedNode?.nodeRef.mod} </div>
+      <hr />
 
+      <label htmlFor="node-name">Update Name</label>
+      <div>
+        <input
+          type="text"
+          name="node-name"
+          id="node-name"
+          value={nameValue}
+          onChange={handleNameChange}
+        />
+      </div>
+      <input type="button" value="Update Name" onClick={handleNameUpdate} />
+
+      <hr />
 
       <label htmlFor="descendant-name">Descendant Name</label>
       <div>
-        <input 
-          type="text" 
-          name="descendant-name" 
-          id="descendant-name" 
+        <input
+          type="text"
+          name="descendant-name"
+          id="descendant-name"
           placeholder="Enter descendant name"
           value={descendantValue}
           onChange={handleInputChange}
         />
       </div>
-
-      <input type="button" value="Add descendant" onClick={addDescendant} />
+      <input type="button" value="Add descendant" onClick={handleAddDescendant} />
 
     </div>
   )
-}
-
-function toggleSidebar() {
-  const container = document.querySelector("#container")!
-
-  if (container.classList.contains("container-show-sidebar")) {
-    container.classList.remove("container-show-sidebar")
-  } else {
-    container.classList.add("container-show-sidebar")
-  }
 }

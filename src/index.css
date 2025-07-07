@@ -13,7 +13,9 @@ body {
 }
 
 #sidebar {
-  background-color: aquamarine;
+  background-color: lightblue;
+  padding: 0 10px;
+  border-style: outset;
 }
 
 .container-show-sidebar {
