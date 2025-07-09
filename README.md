@@ -9,3 +9,5 @@ Remaining Tasks
 - Better CSS and Styling
 - Proper spacing for spouses
 - Ability to save and share tree
+- Ability to click on any node and see the family tree from their perspective
+  - Like if you wanted to see a spouse's family tree

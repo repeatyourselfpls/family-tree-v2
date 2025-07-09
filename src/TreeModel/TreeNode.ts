@@ -26,8 +26,8 @@ export class TreeNode {
   static initializeNodes(
     node: TreeNode,
     parent: TreeNode | null,
-    previousSibling: TreeNode | null, 
-    nextSibling: TreeNode | null, 
+    previousSibling: TreeNode | null,
+    nextSibling: TreeNode | null,
     startingY: number
   ) {
     node.mod = 0
@@ -42,7 +42,7 @@ export class TreeNode {
       node.spouse.positionedX = -1
       node.spouse.positionedY = -1
     }
-    
+
     node.previousSibling = previousSibling
     node.nextSibling = nextSibling
     node.parent = parent
@@ -50,8 +50,8 @@ export class TreeNode {
       TreeNode.initializeNodes(
         node.children[i],
         node,
-        i > 0 ? node.children[i-1] : null,
-        i < node.children.length ? node.children[i+1] : null,
+        i > 0 ? node.children[i - 1] : null,
+        i < node.children.length ? node.children[i + 1] : null,
         startingY + 1
       )
     }
@@ -97,7 +97,7 @@ export class TreeNode {
     }
 
     const minDist = node.previousSibling?.spouse
-      ? TreeNode.NODE_SIZE + TreeNode.SIBLING_DISTANCE + TreeNode.COUPLE_DISTANCE 
+      ? TreeNode.NODE_SIZE + TreeNode.SIBLING_DISTANCE + TreeNode.COUPLE_DISTANCE
       : TreeNode.NODE_SIZE + TreeNode.SIBLING_DISTANCE
 
     if (node.isLeafNode()) {
@@ -121,7 +121,7 @@ export class TreeNode {
       } else {
         node.X = node.previousSibling.X + minDist
         const center = node.spouse ? (node.X + node.X + TreeNode.COUPLE_DISTANCE) / 2
-        : node.X
+          : node.X
         node.mod = center - (node.getLeftMostChildNode().X + node.getRightMostChildNode().X) / 2 // currentX - desired
       }
     }
@@ -271,7 +271,7 @@ export class TreeNode {
         queue.push([child, level + 1, modSum + n.mod])
       }
     }
-    
+
     return contour
   }
 
@@ -299,6 +299,16 @@ export class TreeNode {
     }
   }
 
+  // adds the spousal distance for every node that has a spouse
+  static finalizeSpouse(node: TreeNode) {
+    if (node.spouse) {
+      node.spouse.X = node.X + TreeNode.COUPLE_DISTANCE
+    }
+    for (const child of node.children) {
+      TreeNode.finalizeSpouse(child)
+    }
+  }
+
   static levelOrderTraversal(node: TreeNode) {
     const queue: [TreeNode, number][] = [[node, 0]]
     const traversal: [TreeNode, number][] = []
@@ -306,10 +316,13 @@ export class TreeNode {
     while (queue.length) {
       const [curr, level] = queue.splice(0, 1)[0]
       traversal.push([curr, level])
-      if (curr.children.length) {
-        for (const child of curr.children) {
-          queue.push([child, level + 1])
-        }
+
+      if (curr.spouse) {
+        traversal.push(([curr.spouse, level]))
+      }
+
+      for (const child of curr.children) {
+        queue.push([child, level + 1])
       }
     }
 
@@ -343,7 +356,7 @@ export class TreeNode {
   getRightMostSibling() {
     if (this.parent) {
       const l = this.parent.children.length
-      return this.parent.children[l-1]
+      return this.parent.children[l - 1]
     }
     return null
   }

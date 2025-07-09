@@ -8,6 +8,7 @@ export function retrieveNodes(rootNode: TreeNode) {
   TreeNode.initializeNodes(rootNode, null, null, null, 0)
   TreeNode.calculateXModWithSpouse(rootNode)
   TreeNode.finalizeX(rootNode, 0)
+  TreeNode.finalizeSpouse(rootNode)
 
   const traversedNodes = fitToScreen(TreeNode.levelOrderTraversal(rootNode))
   return traversedNodes

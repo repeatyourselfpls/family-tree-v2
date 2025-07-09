@@ -1,11 +1,12 @@
+import { addEdge, applyEdgeChanges, applyNodeChanges, Background, Controls, Edge, Node, ReactFlow } from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ReactFlow, Background, Controls, applyNodeChanges, applyEdgeChanges, addEdge, Edge, Node } from '@xyflow/react';
-import '@xyflow/react/dist/style.css'
 import { retrieveNodes, treeTwo } from './TreeModel/initializeTree';
-import ButtonNode, { TreeNodeData } from './components/ButtonNode';
+import ButtonNode from './components/ButtonNode';
 
-import Sidebar, { SidebarState } from './components/Sidebar';
 import { TreeNode } from './TreeModel/TreeNode';
+import Sidebar, { SidebarState } from './components/Sidebar';
+import { TreeNodeData } from './components/types';
 import { TreeContext, TreeContextType } from './context/TreeContext';
 
 const nodeTypes = {
@@ -54,7 +55,7 @@ function App() {
     }
     setNodes(calculatedNodes)
     setEdges(calculatedEdges)
-  }, []) 
+  }, [])
 
   useEffect(() => {
     calculateLayout(rootNodeRef.current)

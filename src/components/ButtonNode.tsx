@@ -1,10 +1,6 @@
-import { NodeProps, Node, Handle, Position } from '@xyflow/react';
-import { TreeNode } from '../TreeModel/TreeNode';
+import { Handle, Node, NodeProps, Position } from '@xyflow/react';
 import { useTree } from '../context/TreeContext';
-
-export type TreeNodeData = {
-  nodeRef: TreeNode,
-}
+import { TreeNodeData } from './types';
 
 export type ButtonNodeType = Node<
   TreeNodeData,

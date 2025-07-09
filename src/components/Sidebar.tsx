@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
-import { TreeNodeData } from "./ButtonNode"
 import { useTree } from "../context/TreeContext"
+import { TreeNodeData } from "./types"
 
 export type SidebarState = {
   visible: boolean,

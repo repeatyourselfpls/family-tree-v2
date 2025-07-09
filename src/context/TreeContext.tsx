@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { SidebarState } from "../components/Sidebar"
+import { SidebarState } from "../components/Sidebar";
 import { TreeNode } from "../TreeModel/TreeNode";
 
 export type TreeContextType = {
