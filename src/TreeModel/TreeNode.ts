@@ -7,6 +7,7 @@ export class TreeNode {
   name = ''
   children: TreeNode[] = []
   spouse: TreeNode | null = null
+  isSpouse: boolean = false
   parent: TreeNode | null = null
   previousSibling: TreeNode | null = null
   nextSibling: TreeNode | null = null
@@ -20,6 +21,7 @@ export class TreeNode {
     this.name = name
     this.children = children
     this.spouse = spouse
+    if (this.spouse) this.spouse.isSpouse = true
   }
 
   // Attaches previous siblings and a base Y for each level 
@@ -91,15 +93,16 @@ export class TreeNode {
     }
   }
 
-  static calculateXModWithSpouse(node: TreeNode) {
+  static calculateXModWithSpouseCentered(node: TreeNode) {
     for (const child of node.children) {
-      TreeNode.calculateXModWithSpouse(child)
+      TreeNode.calculateXModWithSpouseCentered(child)
     }
 
     const minDist = node.previousSibling?.spouse
       ? TreeNode.NODE_SIZE + TreeNode.SIBLING_DISTANCE + TreeNode.COUPLE_DISTANCE
       : TreeNode.NODE_SIZE + TreeNode.SIBLING_DISTANCE
 
+    // the children still determine the current node's position if no previous siblings exist
     if (node.isLeafNode()) {
       if (!node.previousSibling) {
         node.X = 0
@@ -111,19 +114,21 @@ export class TreeNode {
         node.X = node.getLeftMostChildNode().X
       } else {
         node.X = node.previousSibling.X + minDist
-        const center = node.spouse ? (node.X + node.X + TreeNode.COUPLE_DISTANCE) / 2
-          : node.X
-        node.mod = center - node.getLeftMostChildNode().X // effectively node.X or center
       }
+      // but the modifier for the current node is affected to center children over both spouses
+      const center = node.spouse ? (node.X + node.X + TreeNode.COUPLE_DISTANCE) / 2
+        : node.X
+      node.mod = center - node.getLeftMostChildNode().X // effectively node.X or center
     } else {
       if (!node.previousSibling) {
         node.X = (node.getLeftMostChildNode().X + node.getRightMostChildNode().X) / 2
       } else {
         node.X = node.previousSibling.X + minDist
-        const center = node.spouse ? (node.X + node.X + TreeNode.COUPLE_DISTANCE) / 2
-          : node.X
-        node.mod = center - (node.getLeftMostChildNode().X + node.getRightMostChildNode().X) / 2 // currentX - desired
       }
+      // but the modifier for the current node is affected to center children over both spouses
+      const center = node.spouse ? (node.X + node.X + TreeNode.COUPLE_DISTANCE) / 2
+        : node.X
+      node.mod = center - (node.getLeftMostChildNode().X + node.getRightMostChildNode().X) / 2 // currentX - desired
     }
 
     if (node.children.length) {
@@ -294,18 +299,13 @@ export class TreeNode {
     node.X += modSum
     modSum += node.mod
 
-    for (const child of node.children) {
-      TreeNode.finalizeX(child, modSum)
-    }
-  }
-
-  // adds the spousal distance for every node that has a spouse
-  static finalizeSpouse(node: TreeNode) {
+    // adds the spousal distance for every node that has a spouse
     if (node.spouse) {
       node.spouse.X = node.X + TreeNode.COUPLE_DISTANCE
     }
+
     for (const child of node.children) {
-      TreeNode.finalizeSpouse(child)
+      TreeNode.finalizeX(child, modSum)
     }
   }
 
