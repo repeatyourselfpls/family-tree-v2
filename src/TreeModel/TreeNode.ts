@@ -182,6 +182,8 @@ export class TreeNode {
       if (shiftValue) {
         node.X += shiftValue
         node.mod += shiftValue
+        // you center each time b/c you want to recalculate the next 
+        // leftSibling's rightContour after centering
         TreeNode.centerNodesBetween(leftSibling, node)
       }
 
