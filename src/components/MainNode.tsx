@@ -2,12 +2,12 @@ import { Handle, Node, NodeProps, Position } from '@xyflow/react';
 import { useTree } from '../context/TreeContext';
 import { TreeNodeData } from './types';
 
-export type ButtonNodeType = Node<
+export type MainNodeType = Node<
   TreeNodeData,
-  'buttonNode'
+  'mainNode'
 >
 
-export default function ButtonNode(props: NodeProps<ButtonNodeType>) {
+export default function MainNode(props: NodeProps<MainNodeType>) {
   const { updateSidebarState } = useTree()
 
   function handleNodeClick() {
@@ -18,7 +18,7 @@ export default function ButtonNode(props: NodeProps<ButtonNodeType>) {
   }
 
   return (
-    <div className="button-node" onClick={handleNodeClick}>
+    <div className="main-node" onClick={handleNodeClick}>
       <Handle
         type="target"
         position={Position.Top}
@@ -33,11 +33,26 @@ export default function ButtonNode(props: NodeProps<ButtonNodeType>) {
       <div>
         {props.data?.nodeRef.mod}
       </div>
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        isConnectable={props.isConnectable}
-      />
+
+      {
+        props.data?.nodeRef.spouse ?
+        <>
+          <Handle
+            type="source"
+            position={Position.Right}
+            isConnectable={props.isConnectable}
+          />
+        </>
+        :
+        <>
+          <Handle
+            type="source"
+            position={Position.Bottom}
+            isConnectable={props.isConnectable}
+          />
+        </>
+      }
+
     </div>
   )
 }

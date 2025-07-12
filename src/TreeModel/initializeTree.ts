@@ -1,8 +1,8 @@
 import { TreeNode } from "./TreeNode"
 
-const RADIUS = 50
-const SPACING_X = RADIUS * 2 * 2
-const SPACING_Y = 150
+export const RADIUS = 50 // Box_size
+export const SPACING_X = RADIUS * 2 * 2
+export const SPACING_Y = 150
 
 export function retrieveNodes(rootNode: TreeNode) {
   TreeNode.initializeNodes(rootNode, null, null, null, 0)

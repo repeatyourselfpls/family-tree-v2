@@ -1,20 +1,29 @@
 import { addEdge, applyEdgeChanges, applyNodeChanges, Background, Controls, Edge, Node, ReactFlow } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { retrieveNodes, treeTwo } from './TreeModel/initializeTree';
-import ButtonNode from './components/ButtonNode';
+import { RADIUS, retrieveNodes, treeTwo } from './TreeModel/initializeTree';
 
 import { TreeNode } from './TreeModel/TreeNode';
 import Sidebar, { SidebarState } from './components/Sidebar';
+import SpouseNode from './components/SpouseNode';
 import { TreeNodeData } from './components/types';
 import { TreeContext, TreeContextType } from './context/TreeContext';
+import MainNode from './components/MainNode';
+import BridgeNode from './components/BridgeNode';
 
 const nodeTypes = {
-  buttonNode: ButtonNode,
+  mainNode: MainNode,
+  spouseNode: SpouseNode,
+  bridgeNode: BridgeNode,
 } // prevent re-renderings
 
 function App() {
   const rootNodeRef = useRef(treeTwo)
+  const [boxWidth, setBoxWidth] = useState(RADIUS)
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--box-width', boxWidth)
+  }, [boxWidth])
 
   const [nodes, setNodes] = useState([] as Node[])
   const [edges, setEdges] = useState([] as Edge[])
@@ -33,16 +42,40 @@ function App() {
       const nodeData: TreeNodeData = {
         nodeRef: n,
       }
+
       calculatedNodes.push(
         {
           id: n.name,
           position: { x: n.positionedX, y: n.positionedY },
           data: nodeData,
-          type: 'buttonNode',
+          type: n.isSpouse ? 'spouseNode' : 'mainNode',
         }
       )
 
-      if (n.parent) {
+      if (n.spouse) {
+        // Add the bridge node
+        calculatedNodes.push(
+          {
+            id: n.name + 'Bridge',
+            position: { x: n.positionedX, y: n.positionedY },
+            data: nodeData,
+            type: n.isSpouse ? 'spouseNode' : 'mainNode',
+          }
+        )
+      }
+
+      if (n.parent && n.parent.spouse) {
+        // Add the connection from the middle if spouse
+        calculatedEdges.push(
+          {
+            id: `${n.parent}Bridge-${n.name}`,
+            source: n.parent.name + 'Bridge',
+            target: n.name,
+            type: 'step',
+          }
+        )
+      } else if (n.parent) {
+        // Add the connection from the parent if no spouse
         calculatedEdges.push(
           {
             id: `${n.parent}-${n.name}`,
@@ -105,7 +138,7 @@ function App() {
           nodeTypes={nodeTypes}
           proOptions={{ hideAttribution: true }}
           onPaneClick={() => setSidebarState({ visible: false, selectedNode: null })}
-          fitView={true}
+          fitView={false}
         >
           <Background bgColor={'wheat'} />
           <Controls />

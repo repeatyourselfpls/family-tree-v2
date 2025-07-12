@@ -64,20 +64,24 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
       </div>
       <input type="button" value="Update Name" onClick={handleNameUpdate} />
 
-      <hr />
 
-      <label htmlFor="descendant-name">Descendant Name</label>
-      <div>
-        <input
-          type="text"
-          name="descendant-name"
-          id="descendant-name"
-          placeholder="Enter descendant name"
-          value={descendantValue}
-          onChange={handleInputChange}
-        />
-      </div>
-      <input type="button" value="Add descendant" onClick={handleAddDescendant} />
+      {!sidebarState.selectedNode?.nodeRef.isSpouse &&
+        <>
+          <hr />
+          <label htmlFor="descendant-name">Descendant Name</label>
+          <div>
+            <input
+              type="text"
+              name="descendant-name"
+              id="descendant-name"
+              placeholder="Enter descendant name"
+              value={descendantValue}
+              onChange={handleInputChange}
+            />
+          </div>
+          <input type="button" value="Add descendant" onClick={handleAddDescendant} />
+        </>
+      }
 
     </div>
   )

@@ -22,16 +22,32 @@ body {
   grid-template-columns: auto 30% !important;
 }
 
-.button-node {
+.main-node {
   min-height: 50px;
   width: 100px;
   background: skyblue;
   padding: 5px;
   border: 1px solid greenyellow;
   border-radius: 5px;
+  box-sizing: border-box;
 }
 
-.button-node:hover {
+.main-node:hover {
+  border: 1px solid rgb(0, 0, 0);
+  border-radius: 8px;
+}
+
+.spouse-node {
+  min-height: 50px;
+  width: 100px;
+  background: rgb(250, 168, 182);
+  padding: 5px;
+  border: 1px solid greenyellow;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.spouse-node:hover {
   border: 1px solid rgb(0, 0, 0);
   border-radius: 8px;
 }
