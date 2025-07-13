@@ -19,11 +19,6 @@ const nodeTypes = {
 
 function App() {
   const rootNodeRef = useRef(treeTwo)
-  const [boxWidth, setBoxWidth] = useState(RADIUS)
-
-  useEffect(() => {
-    document.documentElement.style.setProperty('--box-width', boxWidth)
-  }, [boxWidth])
 
   const [nodes, setNodes] = useState([] as Node[])
   const [edges, setEdges] = useState([] as Edge[])
@@ -57,9 +52,9 @@ function App() {
         calculatedNodes.push(
           {
             id: n.name + 'Bridge',
-            position: { x: n.positionedX, y: n.positionedY },
+            position: { x: n.positionedX + RADIUS*2 + RADIUS, y: n.positionedY },
             data: nodeData,
-            type: n.isSpouse ? 'spouseNode' : 'mainNode',
+            type: 'bridgeNode',
           }
         )
       }

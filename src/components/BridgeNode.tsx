@@ -8,7 +8,7 @@ export type BridgeNodeType = Node<
 
 export default function BridgeNode(props: NodeProps<BridgeNodeType>) {
   return (
-    <div className="spouse-node">
+    <div className="bridge-node">
       <Handle
         type="target"
         position={Position.Left}
