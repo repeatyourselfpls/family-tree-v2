@@ -6,6 +6,7 @@ export type TreeContextType = {
   updateSidebarState: (newState: SidebarState) => void
   addDescendant: (parentNode: TreeNode, descendantName: string) => void
   updateNodeName: (nodeToUpdate: TreeNode, newName: string) => void
+  updateSpouse: (parentNode: TreeNode, spouseName: string) => void
 }
 
 export const TreeContext = createContext<TreeContextType | null>(null);

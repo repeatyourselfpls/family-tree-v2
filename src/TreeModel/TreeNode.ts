@@ -331,6 +331,16 @@ export class TreeNode {
     return traversal
   }
 
+  static updateSpouse(parentNode: TreeNode, spouseName: string) {
+    if (parentNode.spouse) {
+      parentNode.spouse.name = spouseName
+    } else {
+      const spouseNode = new TreeNode(spouseName, [])
+      spouseNode.isSpouse = true
+      parentNode.spouse = spouseNode
+    }
+  }
+
   isLeafNode() {
     return this.children.length == 0
   }

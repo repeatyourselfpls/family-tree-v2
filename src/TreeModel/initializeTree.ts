@@ -96,3 +96,5 @@ const F = new TreeNode("F", [new TreeNode("sd", [])])
 const N = new TreeNode("N", [G, M])
 
 export const treeTwo = new TreeNode("O", [E, F, N])
+
+export const treeStart = new TreeNode("Start Here", [])

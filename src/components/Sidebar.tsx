@@ -12,17 +12,18 @@ export type SidebarProps = {
 }
 
 export default function Sidebar({ sidebarState }: SidebarProps) {
-  const { addDescendant, updateNodeName } = useTree()
+  const { addDescendant, updateNodeName, updateSpouse } = useTree()
 
   const [descendantValue, setDescendantValue] = useState('')
   const [nameValue, setNameValue] = useState('')
+  const [spouseNameValue, setSpouseNameValue] = useState(sidebarState.selectedNode?.nodeRef.spouse?.name || '')
 
   useEffect(() => {
     setNameValue(sidebarState.selectedNode?.nodeRef.name || '')
     setDescendantValue('')
   }, [sidebarState.selectedNode])
 
-  function handleAddDescendant(e) {
+  function handleDescendantUpdate(e) {
     e.preventDefault()
 
     if (sidebarState.selectedNode && descendantValue) {
@@ -37,12 +38,23 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
     }
   }
 
+  function handleSpouseUpdate(e) {
+    e.preventDefault()
+    if (sidebarState.selectedNode && spouseNameValue) {
+      updateSpouse(sidebarState.selectedNode.nodeRef, spouseNameValue)
+    }
+  }
+
   function handleNameChange(e) {
     setNameValue(e.target.value)
   }
 
-  function handleInputChange(e) {
+  function handleDescendantInputChange(e) {
     setDescendantValue(e.target.value)
+  }
+
+  function handleSpouseInputChange(e) {
+    setSpouseNameValue(e.target.value)
   }
 
   return (
@@ -76,13 +88,26 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
               id="descendant-name"
               placeholder="Enter descendant name"
               value={descendantValue}
-              onChange={handleInputChange}
+              onChange={handleDescendantInputChange}
             />
           </div>
-          <input type="button" value="Add descendant" onClick={handleAddDescendant} />
+          <input type="button" value="Add descendant" onClick={handleDescendantUpdate} />
+
+          <hr />
+          <label htmlFor="spouse-name">Spouse Name</label>
+          <div>
+            <input
+              type="text"
+              name="spouse-name"
+              id="spouse-name"
+              placeholder="Enter spouse name"
+              value={spouseNameValue}
+              onChange={handleSpouseInputChange}
+            />
+          </div>
+          <input type="button" value="Add or update existing spouse" onClick={handleSpouseUpdate} />
         </>
       }
-
     </div>
   )
 }

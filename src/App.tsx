@@ -103,10 +103,16 @@ function App() {
     calculateLayout(rootNodeRef.current)
   }, [calculateLayout])
 
+  const updateSpouse = useCallback((parentNode: TreeNode, spouseName: string) => {
+    TreeNode.updateSpouse(parentNode, spouseName)
+    calculateLayout(rootNodeRef.current)
+  }, [calculateLayout])
+
   const contextValue: TreeContextType = {
     updateSidebarState: setSidebarState,
     addDescendant,
-    updateNodeName
+    updateNodeName,
+    updateSpouse,
   }
 
   const onNodesChange = useCallback(
