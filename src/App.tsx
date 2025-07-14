@@ -10,12 +10,17 @@ import { TreeNodeData } from './components/types';
 import { TreeContext, TreeContextType } from './context/TreeContext';
 import MainNode from './components/MainNode';
 import BridgeNode from './components/BridgeNode';
+import { BridgeEdge } from './components/BridgeEdge';
 
 const nodeTypes = {
   mainNode: MainNode,
   spouseNode: SpouseNode,
   bridgeNode: BridgeNode,
 } // prevent re-renderings
+
+const edgeTypes = {
+  bridgeEdge: BridgeEdge
+}
 
 function App() {
   const rootNodeRef = useRef(treeTwo)
@@ -48,35 +53,59 @@ function App() {
       )
 
       if (n.spouse) {
-        // Add the bridge node
+        // Add the hidden bridge node
         calculatedNodes.push(
           {
             id: n.name + 'Bridge',
-            position: { x: n.positionedX + RADIUS*2 + RADIUS, y: n.positionedY },
+            position: { x: n.positionedX + RADIUS * 2, y: n.positionedY },
             data: nodeData,
             type: 'bridgeNode',
+            // draggable: false,
+          }
+        )
+
+        // Add the spouses to bridge 
+        calculatedEdges.push(
+          {
+            id: `${n.name}-${n.name}Bridge`,
+            source: `${n.name}`,
+            target: n.name + 'Bridge',
+            sourceHandle: 'bridgeSource',
+            type: 'straight',
+          },
+          {
+            id: `${n.spouse.name}-${n.name}Bridge`,
+            source: `${n.spouse.name}`,
+            target: n.name + 'Bridge',
+            type: 'straight',
           }
         )
       }
 
       if (n.parent && n.parent.spouse) {
-        // Add the connection from the middle if spouse
+        // Add the connection from middle of parent-spouse to child
         calculatedEdges.push(
-          {
-            id: `${n.parent}Bridge-${n.name}`,
-            source: n.parent.name + 'Bridge',
-            target: n.name,
-            type: 'step',
-          }
+          // {
+          //   id: `${n.parent.name}-${n.name}`,
+          //   source: n.parent.name,
+          //   target: n.name,
+          //   type: 'smoothstep',
+          // },
+          // {
+          //   id: `${n.parent.spouse.name}-${n.name}`,
+          //   source: n.parent.spouse.name,
+          //   target: n.name,
+          //   type: 'smoothstep',
+          // },
         )
       } else if (n.parent) {
-        // Add the connection from the parent if no spouse
+        // Add the connection from the parent
         calculatedEdges.push(
           {
-            id: `${n.parent}-${n.name}`,
+            id: `${n.parent.name}-${n.name}`,
             source: n.parent.name,
             target: n.name,
-            type: 'step',
+            type: 'smoothstep',
           }
         )
       }
@@ -137,6 +166,7 @@ function App() {
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
           proOptions={{ hideAttribution: true }}
           onPaneClick={() => setSidebarState({ visible: false, selectedNode: null })}
           fitView={false}

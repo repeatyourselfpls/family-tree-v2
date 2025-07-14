@@ -11,18 +11,18 @@ export default function BridgeNode(props: NodeProps<BridgeNodeType>) {
     <div className="bridge-node">
       <Handle
         type="target"
-        position={Position.Left}
+        position={Position.Bottom}
         isConnectable={props.isConnectable}
-      />
-      <Handle
-        type="target"
-        position={Position.Right}
-        isConnectable={props.isConnectable}
+        id="spouseTarget"
+        style={{opacity: 0}}
       />
       <Handle
         type="source"
         position={Position.Bottom}
         isConnectable={props.isConnectable}
+        id="descendantSource"
+        style={{opacity: 0}}
+
       />
     </div>
   )

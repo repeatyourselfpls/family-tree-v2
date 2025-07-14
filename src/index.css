@@ -53,8 +53,8 @@ body {
 }
 
 .bridge-node {
-  width: 1;
-  height: 1;
-  background: 'transparent';
-  border: 'none';
+  width: 100px;
+  min-height: 28.5px; 
+  background-color: aliceblue;
+  opacity: 0;
 }
