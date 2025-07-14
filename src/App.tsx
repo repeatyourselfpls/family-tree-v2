@@ -10,7 +10,6 @@ import { TreeNodeData } from './components/types';
 import { TreeContext, TreeContextType } from './context/TreeContext';
 import MainNode from './components/MainNode';
 import BridgeNode from './components/BridgeNode';
-import { BridgeEdge } from './components/BridgeEdge';
 
 const nodeTypes = {
   mainNode: MainNode,
@@ -18,11 +17,13 @@ const nodeTypes = {
   bridgeNode: BridgeNode,
 } // prevent re-renderings
 
-const edgeTypes = {
-  bridgeEdge: BridgeEdge
+export type AppConfig = {
+  drawLinesFromBothSpouses: boolean
 }
 
 function App() {
+  const [appConfig, setAppConfig] = useState<AppConfig>({ drawLinesFromBothSpouses: true })
+
   const rootNodeRef = useRef(treeTwo)
 
   const [nodes, setNodes] = useState([] as Node[])
@@ -83,20 +84,14 @@ function App() {
       }
 
       if (n.parent && n.parent.spouse) {
-        // Add the connection from middle of parent-spouse to child
+        // Add bridge to descendants
         calculatedEdges.push(
-          // {
-          //   id: `${n.parent.name}-${n.name}`,
-          //   source: n.parent.name,
-          //   target: n.name,
-          //   type: 'smoothstep',
-          // },
-          // {
-          //   id: `${n.parent.spouse.name}-${n.name}`,
-          //   source: n.parent.spouse.name,
-          //   target: n.name,
-          //   type: 'smoothstep',
-          // },
+          {
+            id: `${n.parent.name}Bridge-${n.name}`,
+            source: `${n.parent.name}Bridge`,
+            target: n.name,
+            type: 'smoothstep',
+          },
         )
       } else if (n.parent) {
         // Add the connection from the parent
@@ -116,7 +111,7 @@ function App() {
 
   useEffect(() => {
     calculateLayout(rootNodeRef.current)
-  }, [calculateLayout])
+  }, [calculateLayout, appConfig])
 
   const addDescendant = useCallback((parentNode: TreeNode, descendantName: string) => {
     const newChild = new TreeNode(descendantName, [])
@@ -142,6 +137,8 @@ function App() {
     addDescendant,
     updateNodeName,
     updateSpouse,
+    appConfig,
+    setAppConfig,
   }
 
   const onNodesChange = useCallback(
@@ -166,7 +163,6 @@ function App() {
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes}
           proOptions={{ hideAttribution: true }}
           onPaneClick={() => setSidebarState({ visible: false, selectedNode: null })}
           fitView={false}
