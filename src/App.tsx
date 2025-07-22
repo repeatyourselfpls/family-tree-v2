@@ -123,6 +123,7 @@ function App() {
   }, [calculateLayout])
 
   const updateNodeName = useCallback((nodeToUpdate: TreeNode, newName: string) => {
+    TreeNode.updateName(nodeToUpdate, newName)
     nodeToUpdate.name = newName
     calculateLayout(rootNodeRef.current)
   }, [calculateLayout])
