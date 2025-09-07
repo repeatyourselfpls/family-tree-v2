@@ -1,7 +1,28 @@
+:root[data-theme="light"] {
+  --text: #08110e;
+  --background: #f4fbf8;
+  --primary: #3dd6a1;
+  --secondary: #0f855c;
+  --accent: #38fab6;
+  --navbar-divider: #000000;
+  --navbar-shadow: rgba(0, 0, 0, 0.2);
+} 
+
+:root[data-theme="dark"] {
+  --text: #eef7f4;
+  --background: #040b08;
+  --primary: #29c28c;
+  --secondary: #0f855c;
+  --accent: #05c783;
+  --navbar-divider: #000000;
+  --navbar-shadow: rgba(255, 255, 255, 0.15);
+}
+
 html,
 body {
   margin: 0;
   font-family: sans-serif;
+  color: var(--text)
 }
 
 #container {
@@ -9,47 +30,91 @@ body {
   grid-template-columns: auto 0;
   height: 100vh;
   overflow: hidden;
-  transition: 300ms;
+  transition: 300ms ease-in-out;
 }
 
 #sidebar {
-  background-color: lightblue;
+  background-color: var(--secondary);
   padding: 0 10px;
-  border-style: outset;
 }
 
 .container-show-sidebar {
   grid-template-columns: auto 30% !important;
 }
 
+#navbar {
+  position: fixed;
+  top: 1%;
+  left: 50%;
+  transform: translateX(-50%); /* Shift back by half its width */
+  
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--primary);
+  padding: 4px 10px;
+  border-radius: 3px;
+  box-shadow: 0 10px 20px var(--navbar-shadow); 
+  backdrop-filter: blur(6px);
+
+  & button {
+    border: none;
+    border-radius: 3px;
+    background-color: transparent;
+    padding-top: 3px;
+    cursor: pointer;
+  }
+
+  & button:hover {
+    background-color: var(--secondary);
+  }
+}
+
+.navbar-icons {
+  font-size: 24px;
+}
+
+#navbar-divider {
+  border-radius: 1px;
+  opacity: .5;
+  width: 1px;
+  background-color: var(--navbar-divider);
+  height: 24px;
+  margin: 0 6px;
+}
+
 .main-node {
   min-height: 50px;
   width: 100px;
-  background: skyblue;
+  background: var(--primary);
   padding: 5px;
-  border: 1px solid greenyellow;
+  border: 1px solid var(--accent);
   border-radius: 5px;
   box-sizing: border-box;
+  transition: all .2s ease-in-out
 }
 
 .main-node:hover {
-  border: 1px solid rgb(0, 0, 0);
-  border-radius: 8px;
+  transform: scale(1.05);
+  cursor: pointer;
 }
 
 .spouse-node {
   min-height: 50px;
   width: 100px;
-  background: rgb(250, 168, 182);
+  background: var(--primary);
   padding: 5px;
-  border: 1px solid greenyellow;
+  border: 1px solid rgb(250, 168, 182);
   border-radius: 5px;
   box-sizing: border-box;
+  transition: all .2s ease-in-out
 }
 
 .spouse-node:hover {
   border: 1px solid rgb(0, 0, 0);
   border-radius: 8px;
+  transform: scale(1.05);
+  cursor: pointer;
 }
 
 .bridge-node {

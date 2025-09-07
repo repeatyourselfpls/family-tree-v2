@@ -1,6 +1,6 @@
-import { addEdge, applyEdgeChanges, applyNodeChanges, Background, Controls, Edge, Node, ReactFlow } from '@xyflow/react';
+import { addEdge, applyEdgeChanges, applyNodeChanges, Background, Controls, Edge, Node, ReactFlow, ReactFlowInstance } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { RADIUS, retrieveNodes, treeTwo } from './TreeModel/initializeTree';
 
 import { TreeNode } from './TreeModel/TreeNode';
@@ -10,6 +10,7 @@ import { TreeNodeData } from './components/types';
 import { TreeContext, TreeContextType } from './context/TreeContext';
 import MainNode from './components/MainNode';
 import BridgeNode from './components/BridgeNode';
+import { Navbar } from './components/Navbar';
 
 const nodeTypes = {
   mainNode: MainNode,
@@ -23,8 +24,34 @@ export type AppConfig = {
 
 function App() {
   const [appConfig, setAppConfig] = useState<AppConfig>({ drawLinesFromBothSpouses: true })
+  const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);  
+  
+  // Theme configuration
+  const [theme, setTheme] = useState("light")
 
-  const rootNodeRef = useRef(treeTwo)
+  const toggleTheme = () => {
+    setTheme(prev => (prev === "light" ? "dark" : "light"))
+  }
+
+  useEffect(() => {
+    const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    setTheme(systemDark ? "dark" : "light");
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme)
+  }, [theme])
+
+  const [bgColor, setBgColor] = useState("white")
+
+  useEffect(() => {
+    const rootStyle = getComputedStyle(document.documentElement)
+    const color = rootStyle.getPropertyValue("--background").trim()
+    setBgColor(color)
+  }, [theme])
+
+  // Root, edge configuration
+  const [rootNode, setRootNode] = useState(treeTwo)
 
   const [nodes, setNodes] = useState([] as Node[])
   const [edges, setEdges] = useState([] as Edge[])
@@ -110,33 +137,48 @@ function App() {
   }, [])
 
   useEffect(() => {
-    calculateLayout(rootNodeRef.current)
-  }, [calculateLayout, appConfig])
+    calculateLayout(rootNode)
+  }, [calculateLayout, appConfig, rootNode])
 
   const addDescendant = useCallback((parentNode: TreeNode, descendantName: string) => {
     const newChild = new TreeNode(descendantName, [])
     parentNode.children.push(newChild)
 
-    calculateLayout(rootNodeRef.current)
+    calculateLayout(rootNode)
 
     setSidebarState({ visible: false, selectedNode: null })
-  }, [calculateLayout])
+  }, [calculateLayout, rootNode])
 
   const updateNodeName = useCallback((nodeToUpdate: TreeNode, newName: string) => {
     nodeToUpdate.name = newName
-    calculateLayout(rootNodeRef.current)
-  }, [calculateLayout])
+    calculateLayout(rootNode)
+  }, [calculateLayout, rootNode])
 
   const updateSpouse = useCallback((parentNode: TreeNode, spouseName: string) => {
     TreeNode.updateSpouse(parentNode, spouseName)
-    calculateLayout(rootNodeRef.current)
+    calculateLayout(rootNode)
+  }, [calculateLayout, rootNode])
+
+  const updateRootNode = useCallback((node: TreeNode) => {
+    setRootNode(node)
+    calculateLayout(node)
   }, [calculateLayout])
+
+  const saveTree = () => {
+
+  }
 
   const contextValue: TreeContextType = {
     updateSidebarState: setSidebarState,
     addDescendant,
     updateNodeName,
     updateSpouse,
+    updateRootNode,
+    saveTree,
+    rootNode,
+    theme,
+    toggleTheme,
+    reactFlowInstance,
     appConfig,
     setAppConfig,
   }
@@ -165,15 +207,18 @@ function App() {
           nodeTypes={nodeTypes}
           proOptions={{ hideAttribution: true }}
           onPaneClick={() => setSidebarState({ visible: false, selectedNode: null })}
-          fitView={false}
+          fitView={true}
+          onInit={setReactFlowInstance}          
         >
-          <Background bgColor={'wheat'} />
+          <Background bgColor={bgColor} />
           <Controls />
         </ReactFlow>
 
         <Sidebar
           sidebarState={sidebarState}
         />
+  
+        <Navbar />
       </div>
     </TreeContext.Provider>
   )

@@ -19,11 +19,13 @@ export default function MainNode(props: NodeProps<MainNodeType>) {
 
   return (
     <div className="main-node" onClick={handleNodeClick}>
-      <Handle
-        type="target"
-        position={Position.Top}
-        isConnectable={props.isConnectable}
-      />
+      {props.data?.nodeRef.parent &&
+        <Handle
+          type="target"
+          position={Position.Top}
+          isConnectable={props.isConnectable}
+        />
+      }
       <div>
         {props.data?.nodeRef.name}
       </div>
@@ -36,22 +38,22 @@ export default function MainNode(props: NodeProps<MainNodeType>) {
 
       {
         props.data?.nodeRef.spouse ?
-        <>
-          <Handle
-            type="source"
-            position={Position.Right}
-            isConnectable={props.isConnectable}
-            id="bridgeSource"
-          />
-        </>
-        :
-        <>
-          <Handle
-            type="source"
-            position={Position.Bottom}
-            isConnectable={props.isConnectable}
-          />
-        </>
+          <>
+            <Handle
+              type="source"
+              position={Position.Right}
+              isConnectable={props.isConnectable}
+              id="bridgeSource"
+            />
+          </>
+          :
+          <>
+            <Handle
+              type="source"
+              position={Position.Bottom}
+              isConnectable={props.isConnectable}
+            />
+          </>
       }
 
     </div>
