@@ -53,7 +53,7 @@ export class TreeNode {
         node.children[i],
         node,
         i > 0 ? node.children[i - 1] : null,
-        i < node.children.length ? node.children[i + 1] : null,
+        i < node.children.length - 1 ? node.children[i + 1] : null,
         startingY + 1
       )
     }
@@ -339,6 +339,10 @@ export class TreeNode {
       spouseNode.isSpouse = true
       parentNode.spouse = spouseNode
     }
+  }
+
+  static updateName(nodeToUpdate: TreeNode, newName: string) {
+    nodeToUpdate.name = newName
   }
 
   isLeafNode() {
