@@ -151,7 +151,6 @@ function App() {
 
   const updateNodeName = useCallback((nodeToUpdate: TreeNode, newName: string) => {
     TreeNode.updateName(nodeToUpdate, newName)
-    nodeToUpdate.name = newName
     calculateLayout(rootNode)
   }, [calculateLayout, rootNode])
 
@@ -165,8 +164,12 @@ function App() {
     calculateLayout(node)
   }, [calculateLayout])
 
-  const saveTree = () => {
+  const serializeTree = (): string => {
+    return TreeNode.serializeTree(rootNode)
+  }
 
+  const deserializeTree = (serialization: string): TreeNode | null => {
+    return TreeNode.deserializeTree(serialization)
   }
 
   const contextValue: TreeContextType = {
@@ -175,10 +178,13 @@ function App() {
     updateNodeName,
     updateSpouse,
     updateRootNode,
-    saveTree,
+    serializeTree,
+    deserializeTree,
     rootNode,
+
     theme,
     toggleTheme,
+    
     reactFlowInstance,
     appConfig,
     setAppConfig,

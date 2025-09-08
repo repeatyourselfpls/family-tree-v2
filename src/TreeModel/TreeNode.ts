@@ -345,6 +345,52 @@ export class TreeNode {
     nodeToUpdate.name = newName
   }
 
+
+  // returns a string representation of a family tree
+  static serializeTree(node: TreeNode): string {
+
+    function stringify(n: TreeNode) {
+      if (n === null) return ''
+
+      let s = ''
+      s += n.name + (n.spouse !== null ? ':' + n.spouse.name : '') + ','
+      for (const child of n.children) {
+        s += stringify(child)
+      }
+      s += '#,' // end this level
+      return s
+    }
+
+    return stringify(node).slice(0, -1) // remove the excess ,
+  }
+
+  // constructs a TreeNode from the string representation of serializeTree
+  static deserializeTree(s: string): TreeNode | null {
+    const items = s.split(',')
+    let i = 0 // iterator
+
+    function rebuild(): TreeNode | null {
+      if (i === items.length) return null
+
+
+      const splitted = items[i].split(':')
+      const nodeName = splitted[0]
+      const spouseName = splitted.length > 1 ? splitted[1] : null
+
+      const node = new TreeNode(nodeName, [], spouseName !== null ? new TreeNode(spouseName, []) : null)
+      i += 1
+
+      while (i < items.length && items[i] !== '#') {
+        node.children.push(rebuild()!) // keep adding children for root node
+      }
+
+      i += 1
+      return node
+    }
+
+    return rebuild()
+  }
+
   isLeafNode() {
     return this.children.length == 0
   }

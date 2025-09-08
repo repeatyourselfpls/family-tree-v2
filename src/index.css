@@ -61,7 +61,7 @@ body {
     border: none;
     border-radius: 3px;
     background-color: transparent;
-    padding-top: 3px;
+    /* padding-top: 3px; */
     cursor: pointer;
   }
 
@@ -76,7 +76,7 @@ body {
 
 #navbar-divider {
   border-radius: 1px;
-  opacity: .5;
+  opacity: .25;
   width: 1px;
   background-color: var(--navbar-divider);
   height: 24px;

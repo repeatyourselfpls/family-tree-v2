@@ -98,3 +98,17 @@ const N = new TreeNode("N", [G, M])
 export const treeTwo = new TreeNode("O", [E, F, N])
 
 export const treeStart = new TreeNode("Start Here", [])
+
+// const root = new TreeNode("S", 
+// [
+//   new TreeNode("A", [
+//     new TreeNode("X", [])
+//   ]), 
+//   new TreeNode("B", [
+//     new TreeNode("U", []), new TreeNode("V", [])
+//   ]), 
+//   new TreeNode("C", [])
+// ])
+// const serialized = TreeNode.serializeTree(root)
+// const deserialized = TreeNode.deserializeTree(serialized)
+// console.log(deserialized)

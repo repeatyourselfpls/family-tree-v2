@@ -10,10 +10,13 @@ export type TreeContextType = {
   updateNodeName: (nodeToUpdate: TreeNode, newName: string) => void
   updateSpouse: (parentNode: TreeNode, spouseName: string) => void
   updateRootNode: (node: TreeNode) => void
-  saveTree: (node: TreeNode) => void
+  serializeTree: (node: TreeNode) => string
+  deserializeTree: (serialization: string) => TreeNode | null
+  rootNode: TreeNode
+
   theme: string
   toggleTheme: () => void
-  rootNode: TreeNode
+
   reactFlowInstance: ReactFlowInstance | null
   appConfig: AppConfig,
   setAppConfig: React.Dispatch<React.SetStateAction<AppConfig>>
