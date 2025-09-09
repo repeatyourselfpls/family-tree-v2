@@ -372,11 +372,10 @@ export class TreeNode {
     function rebuild(): TreeNode | null {
       if (i === items.length) return null
 
-
       const splitted = items[i].split(':')
       const nodeName = splitted[0]
       const spouseName = splitted.length > 1 ? splitted[1] : null
-
+ 
       const node = new TreeNode(nodeName, [], spouseName !== null ? new TreeNode(spouseName, []) : null)
       i += 1
 
