@@ -26,14 +26,14 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
   function handleDescendantUpdate(e) {
     e.preventDefault()
 
-    if (sidebarState.selectedNode && descendantValue) {
+    if (sidebarState.selectedNode && descendantValue !== '') {
       addDescendant(sidebarState.selectedNode.nodeRef, descendantValue)
     }
   }
 
   function handleNameUpdate(e) {
     e.preventDefault()
-    if (sidebarState.selectedNode && nameValue) {
+    if (sidebarState.selectedNode && nameValue !== '') {
       updateNodeName(sidebarState.selectedNode.nodeRef, nameValue)
     }
   }

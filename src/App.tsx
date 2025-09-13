@@ -11,6 +11,7 @@ import { TreeContext, TreeContextType } from './context/TreeContext';
 import MainNode from './components/MainNode';
 import BridgeNode from './components/BridgeNode';
 import { Navbar } from './components/Navbar';
+import Toast, { ToastState } from './components/Toast';
 
 const nodeTypes = {
   mainNode: MainNode,
@@ -18,40 +19,12 @@ const nodeTypes = {
   bridgeNode: BridgeNode,
 } // prevent re-renderings
 
-export type AppConfig = {
-  drawLinesFromBothSpouses: boolean
-}
-
 function App() {
-  const [appConfig, setAppConfig] = useState<AppConfig>({ drawLinesFromBothSpouses: true })
-  const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);  
+  const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
+  const [rootNode, setRootNode] = useState<TreeNode>(treeTwo)
   
-  // Theme configuration
   const [theme, setTheme] = useState("light")
-
-  const toggleTheme = () => {
-    setTheme(prev => (prev === "light" ? "dark" : "light"))
-  }
-
-  useEffect(() => {
-    const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    setTheme(systemDark ? "dark" : "light");
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme)
-  }, [theme])
-
   const [bgColor, setBgColor] = useState("white")
-
-  useEffect(() => {
-    const rootStyle = getComputedStyle(document.documentElement)
-    const color = rootStyle.getPropertyValue("--background").trim()
-    setBgColor(color)
-  }, [theme])
-
-  // Root, edge configuration
-  const [rootNode, setRootNode] = useState(treeTwo)
 
   const [nodes, setNodes] = useState([] as Node[])
   const [edges, setEdges] = useState([] as Edge[])
@@ -60,6 +33,46 @@ function App() {
     visible: false,
     selectedNode: null,
   } as SidebarState)
+
+  const [toastState, setToastState] = useState<ToastState>({visible: false})
+
+  // on component mount
+  useEffect(() => {
+    // load theme
+    const localTheme = localStorage.getItem('theme')
+    const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (localTheme) {
+      setTheme(localTheme)
+    } else {
+      setTheme(systemDark ? "dark" : "light");
+    }
+
+    // load localstorage tree
+    const jsonSerialization = localStorage.getItem('family-tree')
+    if (jsonSerialization) setRootNode(deserializeTreeJSON(jsonSerialization))
+  }, []);
+
+  // Theme configuration
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light"
+    setTheme(newTheme)
+    localStorage.setItem('theme', newTheme)
+  }
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme)
+
+    const rootStyle = getComputedStyle(document.documentElement)
+    const color = rootStyle.getPropertyValue("--background").trim()
+    setBgColor(color)
+  }, [theme])
+
+  const debouncedSave = useCallback(
+    debounce(() => {
+      const serialized = serializeTreeJSON()
+      localStorage.setItem('family-tree', serialized)
+    }, 1000),
+    []
+  )
 
   const calculateLayout = useCallback((rootNode: TreeNode) => {
     const traversedNodes = retrieveNodes(rootNode)
@@ -138,7 +151,9 @@ function App() {
 
   useEffect(() => {
     calculateLayout(rootNode)
-  }, [calculateLayout, appConfig, rootNode])
+    // Add localstorage saving here
+    debouncedSave()
+  }, [calculateLayout, rootNode, debouncedSave])
 
   const addDescendant = useCallback((parentNode: TreeNode, descendantName: string) => {
     const newChild = new TreeNode(descendantName, [])
@@ -172,6 +187,14 @@ function App() {
     return TreeNode.deserializeTree(serialization)
   }
 
+  const serializeTreeJSON = (): string => {
+    return TreeNode.serializeTreeJSON(rootNode)
+  }
+
+  const deserializeTreeJSON = (serialization: string): TreeNode => {
+    return TreeNode.deserializeTreeJSON(serialization)
+  }
+
   const contextValue: TreeContextType = {
     updateSidebarState: setSidebarState,
     addDescendant,
@@ -180,14 +203,16 @@ function App() {
     updateRootNode,
     serializeTree,
     deserializeTree,
+    serializeTreeJSON,
+    deserializeTreeJSON,
+
     rootNode,
+    toastState,
 
     theme,
     toggleTheme,
-    
+
     reactFlowInstance,
-    appConfig,
-    setAppConfig,
   }
 
   const onNodesChange = useCallback(
@@ -215,7 +240,7 @@ function App() {
           proOptions={{ hideAttribution: true }}
           onPaneClick={() => setSidebarState({ visible: false, selectedNode: null })}
           fitView={true}
-          onInit={setReactFlowInstance}          
+          onInit={setReactFlowInstance}
         >
           <Background bgColor={bgColor} />
           <Controls />
@@ -224,7 +249,9 @@ function App() {
         <Sidebar
           sidebarState={sidebarState}
         />
-  
+
+        <Toast toastState={toastState}/>
+
         <Navbar />
       </div>
     </TreeContext.Provider>
