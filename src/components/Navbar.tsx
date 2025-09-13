@@ -34,7 +34,6 @@ export const Navbar = () => {
     a.download = "tree.ftree"
     a.click()
 
-    document.body.removeChild(a)
     URL.revokeObjectURL(url)
   }
 
