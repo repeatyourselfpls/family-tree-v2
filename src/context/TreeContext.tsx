@@ -5,12 +5,13 @@ import { ReactFlowInstance } from "@xyflow/react";
 import { ToastState } from "../components/Toast";
 
 export type TreeContextType = {
-  setSidebarState: (newState: SidebarState) => void
-  setToastState: (newState: ToastState) => void
+  setRootNode: (node: TreeNode) => void
   addDescendant: (parentNode: TreeNode, descendantName: string) => void
   updateNodeName: (nodeToUpdate: TreeNode, newName: string) => void
   updateSpouse: (parentNode: TreeNode, spouseName: string) => void
-  updateRootNode: (node: TreeNode) => void
+  setSidebarState: (newState: SidebarState) => void
+  setToastState: (newState: ToastState) => void
+  
   serializeTree: (node: TreeNode) => string
   serializeTreeJSON: (node: TreeNode) => string
   deserializeTree: (serialization: string) => TreeNode | null

@@ -22,6 +22,7 @@ const nodeTypes = {
 function App() {
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
   const [rootNode, setRootNode] = useState<TreeNode>(treeTwo)
+  const [updateCounter, setUpdateCounter] = useState(0)
 
   const [theme, setTheme] = useState("light")
   const [bgColor, setBgColor] = useState("white")
@@ -67,27 +68,12 @@ function App() {
     setBgColor(color)
   }, [theme])
 
-  // function debounce(func: Function, wait: number) {
-  //   let timeout
-  //   return (...args: any[]) => {
-  //     clearTimeout(timeout)
-  //     timeout = setTimeout(() => func(...args), wait)
-  //   }
-  // }
-
-  // const debouncedSave = debounce(
-  //   () => {
-  //     const serialized = serializeTreeJSON()
-  //     localStorage.setItem('family-tree', serialized)
-  //   }, 1000
-  // )
-
-
   // Auto save configuration
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       const serialized = serializeTreeJSON(rootNode)
       localStorage.setItem('family-tree', serialized)
+      console.log('Auto-save tree:', serialized)
     }, 1000)
 
     return () => clearTimeout(timeoutId) // runs before next useEffect
@@ -172,31 +158,25 @@ function App() {
 
   useEffect(() => {
     calculateLayout(rootNode)
-  }, [calculateLayout, rootNode])
+  }, [rootNode])
 
-  const addDescendant = useCallback((parentNode: TreeNode, descendantName: string) => {
+  const addDescendant = (parentNode: TreeNode, descendantName: string) => {
     const newChild = new TreeNode(descendantName, [])
     parentNode.children.push(newChild)
 
-    calculateLayout(rootNode)
-
+    setRootNode({... rootNode } as TreeNode)
     setSidebarState({ visible: false, selectedNode: null })
-  }, [calculateLayout, rootNode])
+  }
 
-  const updateNodeName = useCallback((nodeToUpdate: TreeNode, newName: string) => {
+  const updateNodeName = (nodeToUpdate: TreeNode, newName: string) => {
     TreeNode.updateName(nodeToUpdate, newName)
-    calculateLayout(rootNode)
-  }, [calculateLayout, rootNode])
+    setRootNode({... rootNode } as TreeNode)
+  }
 
-  const updateSpouse = useCallback((parentNode: TreeNode, spouseName: string) => {
+  const updateSpouse = (parentNode: TreeNode, spouseName: string) => {
     TreeNode.updateSpouse(parentNode, spouseName)
-    calculateLayout(rootNode)
-  }, [calculateLayout, rootNode])
-
-  const updateRootNode = useCallback((node: TreeNode) => {
-    setRootNode(node)
-    calculateLayout(node)
-  }, [calculateLayout])
+    setRootNode({... rootNode } as TreeNode)
+  }
 
   const serializeTree = (): string => {
     return TreeNode.serializeTree(rootNode)
@@ -223,7 +203,7 @@ function App() {
     addDescendant,
     updateNodeName,
     updateSpouse,
-    updateRootNode,
+    setRootNode,
     serializeTree,
     deserializeTree,
     serializeTreeJSON,

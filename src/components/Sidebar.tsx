@@ -25,7 +25,6 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
 
   function handleDescendantUpdate(e) {
     e.preventDefault()
-
     if (sidebarState.selectedNode && descendantValue !== '') {
       addDescendant(sidebarState.selectedNode.nodeRef, descendantValue)
     }
