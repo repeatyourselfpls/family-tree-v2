@@ -391,22 +391,21 @@ export class TreeNode {
   }
 
   static serializeTreeJSON(node: TreeNode): string {
-    function convert(n: TreeNode): string {
-      const simpleObject = {
+    function convert(n: TreeNode): { name : string, spouse: string | null, children: ReturnType<typeof convert>[] } {
+      return {
         name: n.name,
-        spouse: n?.spouse || null,
+        spouse: n?.spouse?.name || null,
         children: n?.children.map(convert) || [] 
       }
-      return JSON.stringify(simpleObject)
     }
-    return convert(node)
+    return JSON.stringify(convert(node))
   }
 
   static deserializeTreeJSON (serialization: string): TreeNode {
     const simpleObject = JSON.parse(serialization)
-    function rebuild(obj: any): TreeNode {
+    function rebuild(obj: { name: string, spouse: string | null, children: [] }): TreeNode {
       const node = new TreeNode(obj.name, [])
-      node.spouse = obj.spouse
+      node.spouse = obj.spouse ? new TreeNode(obj.spouse, []) : null
       node.children = obj.children.map(rebuild)
       return node
     }

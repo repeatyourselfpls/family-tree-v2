@@ -8,7 +8,7 @@ export type SpouseNodeType = Node<
 >
 
 export default function SpouseNode(props: NodeProps<SpouseNodeType>) {
-  const { updateSidebarState } = useTree()
+  const { setSidebarState: updateSidebarState } = useTree()
 
   function handleNodeClick() {
     updateSidebarState({

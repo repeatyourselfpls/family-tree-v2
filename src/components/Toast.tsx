@@ -2,16 +2,16 @@ export type ToastState = {
 	visible: boolean
 }
 
-const Toast = (toastState: ToastState) => {
-	return <>
-		<div id="toast">
-			{toastState.visible && 
-				<>
-					
-				</>
+const Toast = ({ toastState }) => {
+	return (
+		<>
+			{ toastState.visible && 
+				<div id="toast">
+					Hi
+				</div>
 			}
-		</div>
-	</>
+		</>
+	)
 }
 
 export default Toast 

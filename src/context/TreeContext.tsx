@@ -2,9 +2,11 @@ import { createContext, useContext } from "react";
 import { SidebarState } from "../components/Sidebar";
 import { TreeNode } from "../TreeModel/TreeNode";
 import { ReactFlowInstance } from "@xyflow/react";
+import { ToastState } from "../components/Toast";
 
 export type TreeContextType = {
-  updateSidebarState: (newState: SidebarState) => void
+  setSidebarState: (newState: SidebarState) => void
+  setToastState: (newState: ToastState) => void
   addDescendant: (parentNode: TreeNode, descendantName: string) => void
   updateNodeName: (nodeToUpdate: TreeNode, newName: string) => void
   updateSpouse: (parentNode: TreeNode, spouseName: string) => void

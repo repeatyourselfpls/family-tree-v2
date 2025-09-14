@@ -8,10 +8,10 @@ export type MainNodeType = Node<
 >
 
 export default function MainNode(props: NodeProps<MainNodeType>) {
-  const { updateSidebarState } = useTree()
+  const { setSidebarState } = useTree()
 
   function handleNodeClick() {
-    updateSidebarState({
+    setSidebarState({
       selectedNode: props.data,
       visible: true
     })

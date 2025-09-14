@@ -22,7 +22,7 @@ const nodeTypes = {
 function App() {
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
   const [rootNode, setRootNode] = useState<TreeNode>(treeTwo)
-  
+
   const [theme, setTheme] = useState("light")
   const [bgColor, setBgColor] = useState("white")
 
@@ -34,7 +34,7 @@ function App() {
     selectedNode: null,
   } as SidebarState)
 
-  const [toastState, setToastState] = useState<ToastState>({visible: false})
+  const [toastState, setToastState] = useState<ToastState>({ visible: true })
 
   // on component mount
   useEffect(() => {
@@ -54,6 +54,7 @@ function App() {
 
   // Theme configuration
   const toggleTheme = () => {
+    setToastState({ visible: !toastState.visible })
     const newTheme = theme === "light" ? "dark" : "light"
     setTheme(newTheme)
     localStorage.setItem('theme', newTheme)
@@ -66,14 +67,34 @@ function App() {
     setBgColor(color)
   }, [theme])
 
-  const debouncedSave = useCallback(
-    debounce(() => {
-      const serialized = serializeTreeJSON()
-      localStorage.setItem('family-tree', serialized)
-    }, 1000),
-    []
-  )
+  // function debounce(func: Function, wait: number) {
+  //   let timeout
+  //   return (...args: any[]) => {
+  //     clearTimeout(timeout)
+  //     timeout = setTimeout(() => func(...args), wait)
+  //   }
+  // }
 
+  // const debouncedSave = debounce(
+  //   () => {
+  //     const serialized = serializeTreeJSON()
+  //     localStorage.setItem('family-tree', serialized)
+  //   }, 1000
+  // )
+
+
+  // Auto save configuration
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      const serialized = serializeTreeJSON(rootNode)
+      localStorage.setItem('family-tree', serialized)
+    }, 1000)
+
+    return () => clearTimeout(timeoutId) // runs before next useEffect
+    // prevent multiple saves from happening based on repeated changes within 1000ms window
+  }, [rootNode])
+
+  // Layout configuration
   const calculateLayout = useCallback((rootNode: TreeNode) => {
     const traversedNodes = retrieveNodes(rootNode)
     const calculatedNodes: Node[] = []
@@ -151,9 +172,7 @@ function App() {
 
   useEffect(() => {
     calculateLayout(rootNode)
-    // Add localstorage saving here
-    debouncedSave()
-  }, [calculateLayout, rootNode, debouncedSave])
+  }, [calculateLayout, rootNode])
 
   const addDescendant = useCallback((parentNode: TreeNode, descendantName: string) => {
     const newChild = new TreeNode(descendantName, [])
@@ -187,16 +206,20 @@ function App() {
     return TreeNode.deserializeTree(serialization)
   }
 
-  const serializeTreeJSON = (): string => {
-    return TreeNode.serializeTreeJSON(rootNode)
+  const serializeTreeJSON = (node): string => {
+    return TreeNode.serializeTreeJSON(node)
   }
 
   const deserializeTreeJSON = (serialization: string): TreeNode => {
     return TreeNode.deserializeTreeJSON(serialization)
   }
 
+  // need to figure out what to do with such a large context object
+  // is it possible to put state initialized in a sub component into a global context
+  // object without initializing state in a global component / place
   const contextValue: TreeContextType = {
-    updateSidebarState: setSidebarState,
+    setSidebarState,
+    setToastState,
     addDescendant,
     updateNodeName,
     updateSpouse,
@@ -250,8 +273,7 @@ function App() {
           sidebarState={sidebarState}
         />
 
-        <Toast toastState={toastState}/>
-
+        <Toast toastState={toastState} />
         <Navbar />
       </div>
     </TreeContext.Provider>
