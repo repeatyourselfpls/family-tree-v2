@@ -1,10 +1,7 @@
 import { Handle, Node, NodeProps, Position } from '@xyflow/react';
-import { TreeNodeData } from "./types";
+import { TreeNodeData } from './types';
 
-export type BridgeNodeType = Node<
-  TreeNodeData,
-  'bridgeNode'
->
+export type BridgeNodeType = Node<TreeNodeData, 'bridgeNode'>;
 
 export default function BridgeNode(props: NodeProps<BridgeNodeType>) {
   return (
@@ -22,8 +19,7 @@ export default function BridgeNode(props: NodeProps<BridgeNodeType>) {
         isConnectable={props.isConnectable}
         id="descendantSource"
         style={{ opacity: 0 }}
-
       />
     </div>
-  )
+  );
 }

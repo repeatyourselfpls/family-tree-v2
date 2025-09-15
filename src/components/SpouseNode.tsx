@@ -1,20 +1,17 @@
 import { Handle, Node, NodeProps, Position } from '@xyflow/react';
 import { useTree } from '../context/TreeContext';
-import { TreeNodeData } from "./types";
+import { TreeNodeData } from './types';
 
-export type SpouseNodeType = Node<
-  TreeNodeData,
-  'spouseNode'
->
+export type SpouseNodeType = Node<TreeNodeData, 'spouseNode'>;
 
 export default function SpouseNode(props: NodeProps<SpouseNodeType>) {
-  const { setSidebarState: updateSidebarState } = useTree()
+  const { setSidebarState: updateSidebarState } = useTree();
 
   function handleNodeClick() {
     updateSidebarState({
       selectedNode: props.data,
-      visible: true
-    })
+      visible: true,
+    });
   }
 
   return (
@@ -24,15 +21,9 @@ export default function SpouseNode(props: NodeProps<SpouseNodeType>) {
         position={Position.Left}
         isConnectable={props.isConnectable}
       />
-      <div>
-        {props.data?.nodeRef.name}
-      </div>
-      <div>
-        {props.data?.nodeRef.X}
-      </div>
-      <div>
-        {props.data?.nodeRef.mod}
-      </div>
+      <div>{props.data?.nodeRef.name}</div>
+      <div>{props.data?.nodeRef.X}</div>
+      <div>{props.data?.nodeRef.mod}</div>
     </div>
-  )
+  );
 }

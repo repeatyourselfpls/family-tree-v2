@@ -1,4 +1,4 @@
-:root[data-theme="light"] {
+:root[data-theme='light'] {
   --text: #08110e;
   --background: #f4fbf8;
   --primary: #3dd6a1;
@@ -9,7 +9,7 @@
   --error: rgb(250, 168, 182);
 }
 
-:root[data-theme="dark"] {
+:root[data-theme='dark'] {
   --text: #eef7f4;
   --background: #040b08;
   --primary: #29c28c;
@@ -80,7 +80,7 @@ body {
 
 #navbar-divider {
   border-radius: 1px;
-  opacity: .25;
+  opacity: 0.25;
   width: 1px;
   background-color: var(--navbar-divider);
   height: 24px;
@@ -132,7 +132,7 @@ body {
   border: 1px solid var(--accent);
   border-radius: 5px;
   box-sizing: border-box;
-  transition: all .2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
 .main-node:hover {
@@ -148,7 +148,7 @@ body {
   border: 1px solid rgb(250, 168, 182);
   border-radius: 5px;
   box-sizing: border-box;
-  transition: all .2s ease-in-out
+  transition: all 0.2s ease-in-out;
 }
 
 .spouse-node:hover {

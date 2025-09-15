@@ -1,65 +1,70 @@
-import { useEffect, useState } from "react"
-import { useTree } from "../context/TreeContext"
-import { TreeNodeData } from "./types"
+import { useEffect, useState } from 'react';
+import { useTree } from '../context/TreeContext';
+import { TreeNodeData } from './types';
 
 export type SidebarState = {
-  visible: boolean,
-  selectedNode: TreeNodeData | null,
-}
+  visible: boolean;
+  selectedNode: TreeNodeData | null;
+};
 
 export type SidebarProps = {
-  sidebarState: SidebarState
-}
+  sidebarState: SidebarState;
+};
 
 export default function Sidebar({ sidebarState }: SidebarProps) {
-  const { addDescendant, updateNodeName, updateSpouse } = useTree()
+  const { addDescendant, updateNodeName, updateSpouse } = useTree();
 
-  const [descendantValue, setDescendantValue] = useState('')
-  const [nameValue, setNameValue] = useState('')
-  const [spouseNameValue, setSpouseNameValue] = useState(sidebarState.selectedNode?.nodeRef.spouse?.name || '')
+  const [descendantValue, setDescendantValue] = useState('');
+  const [nameValue, setNameValue] = useState('');
+  const [spouseNameValue, setSpouseNameValue] = useState(
+    sidebarState.selectedNode?.nodeRef.spouse?.name || '',
+  );
 
   useEffect(() => {
-    setNameValue(sidebarState.selectedNode?.nodeRef.name || '')
-    setDescendantValue('')
-  }, [sidebarState.selectedNode])
+    setNameValue(sidebarState.selectedNode?.nodeRef.name || '');
+    setDescendantValue('');
+  }, [sidebarState.selectedNode]);
 
   function handleDescendantUpdate(e) {
-    e.preventDefault()
+    e.preventDefault();
     if (sidebarState.selectedNode && descendantValue !== '') {
-      addDescendant(sidebarState.selectedNode.nodeRef, descendantValue)
+      addDescendant(sidebarState.selectedNode.nodeRef, descendantValue);
     }
   }
 
   function handleNameUpdate(e) {
-    e.preventDefault()
+    e.preventDefault();
     if (sidebarState.selectedNode && nameValue !== '') {
-      updateNodeName(sidebarState.selectedNode.nodeRef, nameValue)
+      updateNodeName(sidebarState.selectedNode.nodeRef, nameValue);
     }
   }
 
   function handleSpouseUpdate(e) {
-    e.preventDefault()
+    e.preventDefault();
     if (sidebarState.selectedNode && spouseNameValue) {
-      updateSpouse(sidebarState.selectedNode.nodeRef, spouseNameValue)
+      updateSpouse(sidebarState.selectedNode.nodeRef, spouseNameValue);
     }
   }
 
   function handleNameChange(e) {
-    setNameValue(e.target.value)
+    setNameValue(e.target.value);
   }
 
   function handleDescendantInputChange(e) {
-    setDescendantValue(e.target.value)
+    setDescendantValue(e.target.value);
   }
 
   function handleSpouseInputChange(e) {
-    setSpouseNameValue(e.target.value)
+    setSpouseNameValue(e.target.value);
   }
 
   return (
     <div id="sidebar">
       <h3>{sidebarState.selectedNode?.nodeRef.name}</h3>
-      <div>X: {sidebarState.selectedNode?.nodeRef.X} | Y: {sidebarState.selectedNode?.nodeRef.Y}</div>
+      <div>
+        X: {sidebarState.selectedNode?.nodeRef.X} | Y:{' '}
+        {sidebarState.selectedNode?.nodeRef.Y}
+      </div>
       <div>MOD: {sidebarState.selectedNode?.nodeRef.mod} </div>
       <hr />
 
@@ -75,8 +80,7 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
       </div>
       <input type="button" value="Update Name" onClick={handleNameUpdate} />
 
-
-      {!sidebarState.selectedNode?.nodeRef.isSpouse &&
+      {!sidebarState.selectedNode?.nodeRef.isSpouse && (
         <>
           <hr />
           <label htmlFor="descendant-name">Descendant Name</label>
@@ -90,7 +94,11 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
               onChange={handleDescendantInputChange}
             />
           </div>
-          <input type="button" value="Add descendant" onClick={handleDescendantUpdate} />
+          <input
+            type="button"
+            value="Add descendant"
+            onClick={handleDescendantUpdate}
+          />
 
           <hr />
           <label htmlFor="spouse-name">Spouse Name</label>
@@ -104,9 +112,13 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
               onChange={handleSpouseInputChange}
             />
           </div>
-          <input type="button" value="Add or update existing spouse" onClick={handleSpouseUpdate} />
+          <input
+            type="button"
+            value="Add or update existing spouse"
+            onClick={handleSpouseUpdate}
+          />
         </>
-      }
+      )}
     </div>
-  )
+  );
 }
