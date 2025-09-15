@@ -1,8 +1,8 @@
+import { ReactFlowInstance } from '@xyflow/react';
 import { createContext, useContext } from 'react';
 import { SidebarState } from '../components/Sidebar';
+import { ToastType } from '../hooks/useToastManager';
 import { TreeNode } from '../TreeModel/TreeNode';
-import { ReactFlowInstance } from '@xyflow/react';
-import { ToastState } from '../components/Toast';
 
 export type TreeContextType = {
   setRootNode: (node: TreeNode) => void;
@@ -10,7 +10,6 @@ export type TreeContextType = {
   updateNodeName: (nodeToUpdate: TreeNode, newName: string) => void;
   updateSpouse: (parentNode: TreeNode, spouseName: string) => void;
   setSidebarState: (newState: SidebarState) => void;
-  setToastState: (newState: ToastState) => void;
 
   serializeTree: (node: TreeNode) => string;
   serializeTreeJSON: (node: TreeNode) => string;
@@ -18,7 +17,7 @@ export type TreeContextType = {
   deserializeTreeJSON: (serialization: string) => TreeNode | null;
 
   rootNode: TreeNode;
-  toastState: { visible: boolean };
+  showToast: (message: string, type: ToastType) => void;
 
   theme: string;
   toggleTheme: () => void;

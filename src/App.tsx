@@ -11,17 +11,17 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useCallback, useEffect, useState } from 'react';
-import { RADIUS, retrieveNodes, treeTwo } from './TreeModel/initializeTree';
-
-import { TreeNode } from './TreeModel/TreeNode';
+import BridgeNode from './components/BridgeNode';
+import MainNode from './components/MainNode';
+import { Navbar } from './components/Navbar';
 import Sidebar, { SidebarState } from './components/Sidebar';
 import SpouseNode from './components/SpouseNode';
+import Toast from './components/Toast';
 import { TreeNodeData } from './components/types';
 import { TreeContext, TreeContextType } from './context/TreeContext';
-import MainNode from './components/MainNode';
-import BridgeNode from './components/BridgeNode';
-import { Navbar } from './components/Navbar';
-import Toast, { ToastState } from './components/Toast';
+import { useToastManager } from './hooks/useToastManager';
+import { RADIUS, retrieveNodes, treeTwo } from './TreeModel/initializeTree';
+import { TreeNode } from './TreeModel/TreeNode';
 
 const nodeTypes = {
   mainNode: MainNode,
@@ -38,23 +38,18 @@ function App() {
   const [theme, setTheme] = useState('light');
   const [bgColor, setBgColor] = useState('white');
 
-  const [nodes, setNodes] = useState([] as Node[]);
-  const [edges, setEdges] = useState([] as Edge[]);
+  const [nodes, setNodes] = useState<Node[]>([]);
+  const [edges, setEdges] = useState<Edge[]>([]);
 
   const [sidebarState, setSidebarState] = useState<SidebarState>({
     visible: false,
     selectedNode: null,
   });
 
-  const [toastState, setToastState] = useState<ToastState>({
-    visible: false,
-    type: 'none',
-    message: '',
-  });
+  const { toastState, showToast } = useToastManager(4000);
 
   // on component mount
   useEffect(() => {
-    // load theme
     const localTheme = localStorage.getItem('theme');
     const systemDark = window.matchMedia(
       '(prefers-color-scheme: dark)',
@@ -165,16 +160,6 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rootNode, treeVersion]);
 
-  // Trigger toast animation on toast state change
-  useEffect(() => {
-    if (!toastState.visible) return;
-
-    const timeoutId = setTimeout(() => {
-      setToastState({ visible: false, message: '', type: 'none' });
-    }, 5000);
-    return () => clearTimeout(timeoutId);
-  }, [toastState.visible]);
-
   const addDescendant = (parentNode: TreeNode, descendantName: string) => {
     const newChild = new TreeNode(descendantName, []);
     parentNode.children.push(newChild);
@@ -214,8 +199,8 @@ function App() {
   // is it possible to put state initialized in a sub component into a global context
   // object without initializing state in a global component / place
   const contextValue: TreeContextType = {
+    showToast,
     setSidebarState,
-    setToastState,
     addDescendant,
     updateNodeName,
     updateSpouse,
@@ -226,7 +211,6 @@ function App() {
     deserializeTreeJSON,
 
     rootNode,
-    toastState,
 
     theme,
     toggleTheme,
@@ -274,9 +258,9 @@ function App() {
         </ReactFlow>
 
         <Sidebar sidebarState={sidebarState} />
+        <Navbar />
 
         <Toast toastState={toastState} />
-        <Navbar />
       </div>
     </TreeContext.Provider>
   );

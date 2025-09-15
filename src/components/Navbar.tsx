@@ -14,7 +14,7 @@ export const Navbar = () => {
   const {
     setRootNode,
     serializeTree,
-    setToastState,
+    showToast,
     deserializeTree,
     rootNode,
     toggleTheme,
@@ -51,14 +51,10 @@ export const Navbar = () => {
 
       URL.revokeObjectURL(url);
 
-      setToastState({ visible: true, message: 'File saved', type: 'success' });
+      showToast('File saved', 'success');
     } catch (err) {
       console.error(err);
-      setToastState({
-        visible: true,
-        type: 'error',
-        message: 'Error saving file',
-      });
+      showToast('Error saving file', 'error');
     }
   };
 
@@ -75,18 +71,10 @@ export const Navbar = () => {
       const fileContent = await readFileAsync(file);
       processUploadedFile(fileContent);
 
-      setToastState({
-        visible: true,
-        message: 'File uploaded',
-        type: 'success',
-      });
+      showToast('File uploaded', 'success');
     } catch (err) {
       console.error('File upload error:', err);
-      setToastState({
-        visible: true,
-        type: 'error',
-        message: 'Error uploading file',
-      });
+      showToast('Error uploading file', 'error');
     }
   };
 
