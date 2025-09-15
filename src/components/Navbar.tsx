@@ -5,7 +5,7 @@ import { CiUndo, CiLight, CiSaveDown2, CiDark, CiSaveUp2 } from "react-icons/ci"
 
 // Used to create a new, empty tree
 export const Navbar = () => {
-  const { setRootNode, serializeTree, deserializeTree, rootNode, toggleTheme, theme, reactFlowInstance } = useTree()
+  const { setRootNode, serializeTree, setToastState, deserializeTree, rootNode, toggleTheme, theme, reactFlowInstance } = useTree()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -23,18 +23,24 @@ export const Navbar = () => {
   }
 
   const handleFileSave = () => {
-    const serialization = serializeTree(rootNode)
+    try {
+      const serialization = serializeTree(rootNode)
 
-    console.log(serialization, JSON.stringify(serialization))
-    const blob = new Blob([serialization], { type: "text/plain" })
-    const url = URL.createObjectURL(blob)
+      const blob = new Blob([serialization], { type: "text/plain" })
+      const url = URL.createObjectURL(blob)
 
-    const a = document.createElement("a")
-    a.href = url
-    a.download = "tree.ftree"
-    a.click()
+      const a = document.createElement("a")
+      a.href = url
+      a.download = "tree.ftree"
+      a.click()
 
-    URL.revokeObjectURL(url)
+      URL.revokeObjectURL(url)
+
+      setToastState({ visible: true, message: 'File saved', type: 'success' })
+    } catch (err) {
+      console.error(err)
+      setToastState({ visible: true, type: 'error', message: 'Error saving file' })
+    }
   }
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,9 +52,11 @@ export const Navbar = () => {
       // Read file content asynchrnously and wait for it 
       const fileContent = await readFileAsync(file)
       processUploadedFile(fileContent)
+
+      setToastState({ visible: true, message: 'File uploaded', type: 'success' })
     } catch (err) {
       console.error("File upload error:", err);
-      alert((err as Error).message);
+      setToastState({ visible: true, type: 'error', message: 'Error uploading file' })
     }
   }
 
@@ -84,8 +92,7 @@ export const Navbar = () => {
   return <>
     <div id="navbar">
       <button onClick={toggleInformation}>
-        {/* <CiCircleInfo className="navbar-icons" /> */}
-        Kin Sketch
+        KinSketch
       </button>
       <div id="navbar-divider"></div>
       <button onClick={reset} title="Reset tree">
@@ -96,12 +103,12 @@ export const Navbar = () => {
       </button>
       <button onClick={uploadFile} title="Load tree">
         <CiSaveUp2 className="navbar-icons" />
-        <input 
+        <input
           type="file"
           ref={fileInputRef}
-          accept=".ftree" 
+          accept=".ftree"
           onChange={handleFileUpload}
-          style={{display: "none"}}
+          style={{ display: "none" }}
         />
       </button>
       <div id="navbar-divider"></div>

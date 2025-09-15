@@ -6,7 +6,7 @@
   --accent: #38fab6;
   --navbar-divider: #000000;
   --navbar-shadow: rgba(0, 0, 0, 0.2);
-} 
+}
 
 :root[data-theme="dark"] {
   --text: #eef7f4;
@@ -48,15 +48,16 @@ body {
   position: fixed;
   top: 1%;
   left: 50%;
-  transform: translateX(-50%); /* Shift back by half its width */
-  
+  transform: translateX(-50%);
+  /* Shift back by half its width */
+
   display: flex;
   align-items: center;
   gap: 4px;
   background: var(--primary);
   padding: 4px 10px;
   border-radius: 3px;
-  box-shadow: 0 10px 20px var(--navbar-shadow); 
+  box-shadow: 0 10px 20px var(--navbar-shadow);
   backdrop-filter: blur(6px);
 
   & button {
@@ -89,12 +90,55 @@ body {
   position: fixed;
   bottom: 5%;
   right: 5%;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 500;
   background: var(--primary);
-  border-radius: 2px;
-  width: 200px;
-  height: 40px;
-  /* This animation pop in isn't working. */
-  transition: all .2s ease-in-out;
+  border-radius: 6px;
+
+  /* Animation */
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* Hidden state - off screen */
+#toast.toast-hidden {
+  transform: translateX(calc(100% + 40px));
+  /* Fully off screen */
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Success variant */
+#toast.toast-success {
+  background: #10b981;
+  color: white;
+  border: 1px solid #059669;
+}
+
+/* Error variant */
+#toast.toast-error {
+  background: #ef4444;
+  color: white;
+  border: 1px solid #dc2626;
+}
+
+/* Entry animation (optional enhancement) */
+@keyframes slideIn {
+  from {
+    transform: translateX(calc(100% + 40px));
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+#toast.toast-entering {
+  animation: slideIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .main-node {
@@ -133,7 +177,7 @@ body {
 
 .bridge-node {
   width: 100px;
-  min-height: 28.5px; 
+  min-height: 28.5px;
   background-color: aliceblue;
   opacity: 0;
 }

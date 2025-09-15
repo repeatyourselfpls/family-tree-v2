@@ -1,15 +1,22 @@
 export type ToastState = {
-	visible: boolean
+	visible: boolean;
+	type: 'error' | 'success' | 'none';
+	message: string;
 }
 
 const Toast = ({ toastState }) => {
+	const toastClass = [
+		'toast',
+		!toastState.visible && 'toast-hidden',
+		toastState.type !== 'none' && `toast-${toastState.type}`
+	].filter(Boolean).join(' ')
+	console.log(toastClass);
+
 	return (
 		<>
-			{ toastState.visible && 
-				<div id="toast">
-					Hi
-				</div>
-			}
+			<div id="toast" className={toastClass}>
+				{toastState.message}
+			</div>
 		</>
 	)
 }

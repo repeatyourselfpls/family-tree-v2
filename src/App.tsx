@@ -22,7 +22,7 @@ const nodeTypes = {
 function App() {
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
   const [rootNode, setRootNode] = useState<TreeNode>(treeTwo)
-  const [updateCounter, setUpdateCounter] = useState(0)
+  const [treeVersion, setTreeVersion] = useState(0)
 
   const [theme, setTheme] = useState("light")
   const [bgColor, setBgColor] = useState("white")
@@ -30,12 +30,16 @@ function App() {
   const [nodes, setNodes] = useState([] as Node[])
   const [edges, setEdges] = useState([] as Edge[])
 
-  const [sidebarState, setSidebarState] = useState({
+  const [sidebarState, setSidebarState] = useState<SidebarState>({
     visible: false,
     selectedNode: null,
-  } as SidebarState)
+  })
 
-  const [toastState, setToastState] = useState<ToastState>({ visible: true })
+  const [toastState, setToastState] = useState<ToastState>({
+    visible: false,
+    type: 'none',
+    message: ''
+  })
 
   // on component mount
   useEffect(() => {
@@ -55,11 +59,11 @@ function App() {
 
   // Theme configuration
   const toggleTheme = () => {
-    setToastState({ visible: !toastState.visible })
     const newTheme = theme === "light" ? "dark" : "light"
     setTheme(newTheme)
     localStorage.setItem('theme', newTheme)
   }
+
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme)
 
@@ -67,18 +71,6 @@ function App() {
     const color = rootStyle.getPropertyValue("--background").trim()
     setBgColor(color)
   }, [theme])
-
-  // Auto save configuration
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      const serialized = serializeTreeJSON(rootNode)
-      localStorage.setItem('family-tree', serialized)
-      console.log('Auto-save tree:', serialized)
-    }, 1000)
-
-    return () => clearTimeout(timeoutId) // runs before next useEffect
-    // prevent multiple saves from happening based on repeated changes within 1000ms window
-  }, [rootNode])
 
   // Layout configuration
   const calculateLayout = useCallback((rootNode: TreeNode) => {
@@ -158,24 +150,44 @@ function App() {
 
   useEffect(() => {
     calculateLayout(rootNode)
-  }, [rootNode])
+
+    const timeoutId = setTimeout(() => {
+      const serialized = serializeTreeJSON(rootNode)
+      localStorage.setItem('family-tree', serialized)
+      console.log('Auto-save tree:', serialized)
+    }, 1000)
+
+    return () => clearTimeout(timeoutId)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rootNode, treeVersion])
+
+  // Trigger toast animation on toast state change
+  useEffect(() => {
+    if (!toastState.visible) return
+
+    const timeoutId = setTimeout(() => {
+      setToastState({ visible: false, message: '', type: 'none' })
+    }, 3000)
+    return () => clearTimeout(timeoutId)
+  }, [toastState.visible])
 
   const addDescendant = (parentNode: TreeNode, descendantName: string) => {
     const newChild = new TreeNode(descendantName, [])
     parentNode.children.push(newChild)
 
-    setRootNode({... rootNode } as TreeNode)
+    setTreeVersion(prevVersion => prevVersion + 1)
+
     setSidebarState({ visible: false, selectedNode: null })
   }
 
   const updateNodeName = (nodeToUpdate: TreeNode, newName: string) => {
     TreeNode.updateName(nodeToUpdate, newName)
-    setRootNode({... rootNode } as TreeNode)
+    setTreeVersion(prevVersion => prevVersion + 1)
   }
 
   const updateSpouse = (parentNode: TreeNode, spouseName: string) => {
     TreeNode.updateSpouse(parentNode, spouseName)
-    setRootNode({... rootNode } as TreeNode)
+    setTreeVersion(prevVersion => prevVersion + 1)
   }
 
   const serializeTree = (): string => {
@@ -186,7 +198,7 @@ function App() {
     return TreeNode.deserializeTree(serialization)
   }
 
-  const serializeTreeJSON = (node): string => {
+  const serializeTreeJSON = (node: TreeNode): string => {
     return TreeNode.serializeTreeJSON(node)
   }
 
