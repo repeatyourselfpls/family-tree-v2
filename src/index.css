@@ -6,6 +6,7 @@
   --accent: #38fab6;
   --navbar-divider: #000000;
   --navbar-shadow: rgba(0, 0, 0, 0.2);
+  --error: rgb(250, 168, 182);
 }
 
 :root[data-theme="dark"] {
@@ -16,13 +17,13 @@
   --accent: #05c783;
   --navbar-divider: #000000;
   --navbar-shadow: rgba(255, 255, 255, 0.15);
+  --error: rgb(250, 168, 182);
 }
 
 html,
 body {
   margin: 0;
   font-family: sans-serif;
-  color: var(--text)
 }
 
 #container {
@@ -88,57 +89,39 @@ body {
 
 #toast {
   position: fixed;
-  bottom: 5%;
-  right: 5%;
+  bottom: 20px;
+  right: 20px;
   padding: 12px 20px;
-  font-size: 14px;
-  font-weight: 500;
-  background: var(--primary);
+  max-width: 25vw;
+  background: var(--background);
+  border: 1px solid var(--secondary);
+  box-shadow: 0 10px 20px var(--navbar-shadow);
+  color: var(--text);
   border-radius: 6px;
 
   /* Animation */
   transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  /* Move it on screen*/
   transform: translateX(0);
   opacity: 1;
+
+  & span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
 }
 
 /* Hidden state - off screen */
 #toast.toast-hidden {
-  transform: translateX(calc(100% + 40px));
-  /* Fully off screen */
+  /* Moves right its own width to be offscreen */
+  transform: translateX(calc(100% + 20px));
   opacity: 0;
   pointer-events: none;
 }
 
-/* Success variant */
-#toast.toast-success {
-  background: #10b981;
-  color: white;
-  border: 1px solid #059669;
-}
-
-/* Error variant */
 #toast.toast-error {
-  background: #ef4444;
-  color: white;
-  border: 1px solid #dc2626;
-}
-
-/* Entry animation (optional enhancement) */
-@keyframes slideIn {
-  from {
-    transform: translateX(calc(100% + 40px));
-    opacity: 0;
-  }
-
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-#toast.toast-entering {
-  animation: slideIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  border: 1px solid var(--error);
 }
 
 .main-node {

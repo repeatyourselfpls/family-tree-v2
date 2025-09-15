@@ -1,3 +1,6 @@
+import { FaCheck } from "react-icons/fa";
+import { FaX } from "react-icons/fa6";
+
 export type ToastState = {
 	visible: boolean;
 	type: 'error' | 'success' | 'none';
@@ -8,14 +11,14 @@ const Toast = ({ toastState }) => {
 	const toastClass = [
 		'toast',
 		!toastState.visible && 'toast-hidden',
-		toastState.type !== 'none' && `toast-${toastState.type}`
+		toastState.type !== 'none' && `toast-${toastState.type}`,
 	].filter(Boolean).join(' ')
-	console.log(toastClass);
 
 	return (
 		<>
 			<div id="toast" className={toastClass}>
-				{toastState.message}
+				{toastState.type === 'success' && <span><FaCheck />{toastState.message}</span>}
+				{toastState.type === 'error' && <span><FaX />{toastState.message}</span>}
 			</div>
 		</>
 	)

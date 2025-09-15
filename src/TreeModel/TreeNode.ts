@@ -375,7 +375,7 @@ export class TreeNode {
       const splitted = items[i].split(':')
       const nodeName = splitted[0]
       const spouseName = splitted.length > 1 ? splitted[1] : null
- 
+
       const node = new TreeNode(nodeName, [], spouseName !== null ? new TreeNode(spouseName, []) : null)
       i += 1
 
@@ -391,17 +391,17 @@ export class TreeNode {
   }
 
   static serializeTreeJSON(node: TreeNode): string {
-    function convert(n: TreeNode): { name : string, spouse: string | null, children: ReturnType<typeof convert>[] } {
+    function convert(n: TreeNode): { name: string, spouse: string | null, children: ReturnType<typeof convert>[] } {
       return {
         name: n.name,
         spouse: n?.spouse?.name || null,
-        children: n?.children.map(convert) || [] 
+        children: n?.children.map(convert) || []
       }
     }
     return JSON.stringify(convert(node))
   }
 
-  static deserializeTreeJSON (serialization: string): TreeNode {
+  static deserializeTreeJSON(serialization: string): TreeNode {
     const simpleObject = JSON.parse(serialization)
     function rebuild(obj: { name: string, spouse: string | null, children: [] }): TreeNode {
       const node = new TreeNode(obj.name, [])

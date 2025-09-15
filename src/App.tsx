@@ -167,7 +167,7 @@ function App() {
 
     const timeoutId = setTimeout(() => {
       setToastState({ visible: false, message: '', type: 'none' })
-    }, 3000)
+    }, 5000)
     return () => clearTimeout(timeoutId)
   }, [toastState.visible])
 

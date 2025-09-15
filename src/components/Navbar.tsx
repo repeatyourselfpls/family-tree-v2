@@ -1,7 +1,7 @@
 import { useRef } from "react";
-import { useTree } from "../context/TreeContext"
-import { TreeNode } from "../TreeModel/TreeNode"
-import { CiUndo, CiLight, CiSaveDown2, CiDark, CiSaveUp2 } from "react-icons/ci";
+import { CiDark, CiLight, CiSaveDown2, CiSaveUp2, CiUndo } from "react-icons/ci";
+import { useTree } from "../context/TreeContext";
+import { TreeNode } from "../TreeModel/TreeNode";
 
 // Used to create a new, empty tree
 export const Navbar = () => {

@@ -14,14 +14,14 @@ export default function BridgeNode(props: NodeProps<BridgeNodeType>) {
         position={Position.Bottom}
         isConnectable={props.isConnectable}
         id="spouseTarget"
-        style={{opacity: 0}}
+        style={{ opacity: 0 }}
       />
       <Handle
         type="source"
         position={Position.Bottom}
         isConnectable={props.isConnectable}
         id="descendantSource"
-        style={{opacity: 0}}
+        style={{ opacity: 0 }}
 
       />
     </div>
