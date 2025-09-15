@@ -154,7 +154,6 @@ function App() {
     const timeoutId = setTimeout(() => {
       const serialized = serializeTreeJSON(rootNode)
       localStorage.setItem('family-tree', serialized)
-      console.log('Auto-save tree:', serialized)
     }, 1000)
 
     return () => clearTimeout(timeoutId)
