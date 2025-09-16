@@ -106,6 +106,7 @@ function App() {
           data: nodeData,
           type: 'bridgeNode',
           draggable: false,
+          style: { opacity: 0, pointerEvents: 'none' }, // Completely invisible
         });
 
         // Add the spouses to bridge
@@ -223,12 +224,7 @@ function App() {
     toggleTheme,
   };
 
-  // const onNodesChange = useCallback(
-  //   (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-  //   [],
-  // );
-
-  const onNodesChange2 = useCallback((changes) => {
+  const onNodesChange = useCallback((changes) => {
     setNodes((previousNodes) => {
       const updatedNodes = applyNodeChanges(changes, previousNodes);
 
@@ -276,7 +272,7 @@ function App() {
         <ReactFlow
           nodes={nodes}
           edges={edges}
-          onNodesChange={onNodesChange2}
+          onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           nodeTypes={nodeTypes}
