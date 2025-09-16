@@ -163,4 +163,5 @@ body {
   min-height: 28.5px;
   background-color: aliceblue;
   opacity: 0;
+  pointer-events: none;
 }

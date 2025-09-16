@@ -6,7 +6,7 @@ export const SPACING_Y = 150;
 
 export function retrieveNodes(rootNode: TreeNode) {
   TreeNode.initializeNodes(rootNode, null, null, null, 0);
-  // TreeNode.calculateXMod(rootNode)
+  // TreeNode.calculateXMod(rootNode);
   TreeNode.calculateXModWithSpouseCentered(rootNode);
   TreeNode.finalizeX(rootNode, 0);
 

@@ -19,14 +19,12 @@ export const Navbar = () => {
     rootNode,
     toggleTheme,
     theme,
-    reactFlowInstance,
   } = useTree();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const reset = () => {
     setRootNode(new TreeNode('Add your first descendant', []));
-    reactFlowInstance!.fitView();
   };
 
   const toggleInformation = () => {
@@ -105,7 +103,6 @@ export const Navbar = () => {
     const node = deserializeTree(fileInput);
     if (node !== null) {
       setRootNode(node);
-      reactFlowInstance!.fitView();
     }
   };
 

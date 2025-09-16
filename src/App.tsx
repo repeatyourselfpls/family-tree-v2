@@ -63,7 +63,7 @@ function App() {
     // load localstorage tree
     const jsonSerialization = localStorage.getItem('family-tree');
     if (jsonSerialization) setRootNode(deserializeTreeJSON(jsonSerialization));
-  }, []);
+  }, [reactFlowInstance]);
 
   // Theme configuration
   const toggleTheme = () => {
@@ -80,7 +80,7 @@ function App() {
     setBgColor(color);
   }, [theme]);
 
-  // Layout configuration
+  // Recalculate layout and save to local storage
   const calculateLayout = useCallback((rootNode: TreeNode) => {
     const traversedNodes = retrieveNodes(rootNode);
     const calculatedNodes: Node[] = [];
@@ -105,7 +105,7 @@ function App() {
           position: { x: n.positionedX + RADIUS * 2, y: n.positionedY },
           data: nodeData,
           type: 'bridgeNode',
-          // draggable: false,
+          draggable: false,
         });
 
         // Add the spouses to bridge
@@ -115,12 +115,14 @@ function App() {
             source: `${n.name}`,
             target: n.name + 'Bridge',
             sourceHandle: 'bridgeSource',
+            targetHandle: 'spouseTarget',
             type: 'straight',
           },
           {
             id: `${n.spouse.name}-${n.name}Bridge`,
             source: `${n.spouse.name}`,
             target: n.name + 'Bridge',
+            targetHandle: 'spouseTarget',
             type: 'straight',
           },
         );
@@ -154,11 +156,16 @@ function App() {
     const timeoutId = setTimeout(() => {
       const serialized = serializeTreeJSON(rootNode);
       localStorage.setItem('family-tree', serialized);
-    }, 1000);
+    }, 2500);
 
     return () => clearTimeout(timeoutId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rootNode, treeVersion]);
+
+  // Refit whenever the entire root node is replaced
+  useEffect(() => {
+    reactFlowInstance?.fitView();
+  }, [rootNode, reactFlowInstance]);
 
   const addDescendant = (parentNode: TreeNode, descendantName: string) => {
     const newChild = new TreeNode(descendantName, []);
@@ -214,14 +221,41 @@ function App() {
 
     theme,
     toggleTheme,
-
-    reactFlowInstance,
   };
 
-  const onNodesChange = useCallback(
-    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-    [],
-  );
+  // const onNodesChange = useCallback(
+  //   (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+  //   [],
+  // );
+
+  const onNodesChange2 = useCallback((changes) => {
+    setNodes((previousNodes) => {
+      const updatedNodes = applyNodeChanges(changes, previousNodes);
+
+      return updatedNodes.map((node) => {
+        // Check if THIS node is a bridge node
+        if (node.type === 'bridgeNode') {
+          const mainNodeId = node.id.replace('Bridge', '');
+          const mainNode = updatedNodes.find((n) => n.id === mainNodeId);
+          const spouseNode = updatedNodes.find(
+            (n) =>
+              n.id === (mainNode?.data as TreeNodeData).nodeRef.spouse?.name,
+          );
+
+          if (mainNode && spouseNode) {
+            return {
+              ...node,
+              position: {
+                x: (mainNode.position.x + spouseNode.position.x) / 2,
+                y: (mainNode.position.y + spouseNode.position.y) / 2,
+              },
+            };
+          }
+        }
+        return node; // Return unchanged for non-bridge nodes
+      });
+    });
+  }, []);
 
   const onEdgesChange = useCallback(
     (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
@@ -242,7 +276,7 @@ function App() {
         <ReactFlow
           nodes={nodes}
           edges={edges}
-          onNodesChange={onNodesChange}
+          onNodesChange={onNodesChange2}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           nodeTypes={nodeTypes}

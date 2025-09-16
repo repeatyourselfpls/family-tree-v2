@@ -443,7 +443,11 @@ export class TreeNode {
       children: [];
     }): TreeNode {
       const node = new TreeNode(obj.name, []);
-      node.spouse = obj.spouse ? new TreeNode(obj.spouse, []) : null;
+      if (obj.spouse) {
+        const spouseNode = new TreeNode(obj.spouse, []);
+        spouseNode.isSpouse = true;
+        node.spouse = spouseNode;
+      }
       node.children = obj.children.map(rebuild);
       return node;
     }

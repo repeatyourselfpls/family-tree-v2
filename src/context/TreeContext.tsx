@@ -1,4 +1,3 @@
-import { ReactFlowInstance } from '@xyflow/react';
 import { createContext, useContext } from 'react';
 import { SidebarState } from '../components/Sidebar';
 import { ToastType } from '../hooks/useToastManager';
@@ -21,8 +20,6 @@ export type TreeContextType = {
 
   theme: string;
   toggleTheme: () => void;
-
-  reactFlowInstance: ReactFlowInstance | null;
 };
 
 export const TreeContext = createContext<TreeContextType | null>(null);
