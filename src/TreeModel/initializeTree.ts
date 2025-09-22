@@ -113,6 +113,33 @@ export const treeTwo = new TreeNode('O', [E, F, N]);
 
 export const treeStart = new TreeNode('Start Here', []);
 
+// Test tree with rich person data
+export const richTreeExample = new TreeNode(
+  'John',
+  [
+    new TreeNode('Sarah Smith', [], null, {
+      birthDate: '1975-03-15',
+      occupation: 'Doctor',
+      location: 'New York, NY',
+    }),
+    new TreeNode('Michael Smith', [], null, {
+      nickname: 'Mike',
+      birthDate: '1978-07-22',
+      occupation: 'Software Engineer',
+      bio: 'Passionate about technology and innovation.',
+      location: 'San Francisco, CA',
+    }),
+  ],
+  null,
+  {
+    birthDate: '1950-01-10',
+    deathDate: '2020-12-05',
+    occupation: 'Professor',
+    location: 'Boston, MA',
+    bio: 'Dedicated educator and loving father.',
+  },
+);
+
 // const root = new TreeNode('S', [
 //   new TreeNode('A', [new TreeNode('X', [])]),
 //   new TreeNode('B', [new TreeNode('U', []), new TreeNode('V', [])]),

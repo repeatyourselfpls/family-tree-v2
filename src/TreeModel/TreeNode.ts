@@ -1,3 +1,13 @@
+export interface PersonData {
+  nickname?: string;
+  birthDate?: string;
+  deathDate?: string;
+  profilePicture?: string;
+  bio?: string;
+  location?: string;
+  occupation?: string;
+}
+
 export class TreeNode {
   static NODE_SIZE = 1;
   static SIBLING_DISTANCE = 0;
@@ -5,6 +15,7 @@ export class TreeNode {
   static COUPLE_DISTANCE = 1; // should be <= (node_size + sibling_distance) for aesthetics
 
   name = '';
+  personData: PersonData = {};
   children: TreeNode[] = [];
   spouse: TreeNode | null = null;
   isSpouse: boolean = false;
@@ -19,10 +30,12 @@ export class TreeNode {
 
   constructor(
     name: string,
-    children: TreeNode[],
+    children: TreeNode[] = [],
     spouse: TreeNode | null = null,
+    personData?: PersonData,
   ) {
     this.name = name;
+    this.personData = personData || {};
     this.children = children;
     this.spouse = spouse;
     if (this.spouse) this.spouse.isSpouse = true;
@@ -379,33 +392,75 @@ export class TreeNode {
       if (n === null) return '';
 
       let s = '';
-      s += n.name + (n.spouse !== null ? ':' + n.spouse.name : '') + ',';
+      // Include name and spouse
+      s += n.name + (n.spouse !== null ? ':' + n.spouse.name : '');
+
+      // Add person data fields with | separator
+      const dataFields: string[] = [];
+      if (n.personData?.nickname)
+        dataFields.push(`nick=${n.personData.nickname}`);
+      if (n.personData?.birthDate)
+        dataFields.push(`birth=${n.personData.birthDate}`);
+      if (n.personData?.deathDate)
+        dataFields.push(`death=${n.personData.deathDate}`);
+      if (n.personData?.occupation)
+        dataFields.push(`occ=${n.personData.occupation}`);
+      if (n.personData?.location)
+        dataFields.push(`loc=${n.personData.location}`);
+      if (n.personData?.bio) dataFields.push(`bio=${n.personData.bio}`);
+      if (n.personData?.profilePicture)
+        dataFields.push(`pic=${n.personData.profilePicture}`);
+
+      if (dataFields.length > 0) {
+        s += '|' + dataFields.join('|');
+      }
+      s += ':::'; // Use ::: as separator instead of comma
+
       for (const child of n.children) {
         s += stringify(child);
       }
-      s += '#,'; // end this level
+      s += '#:::'; // end this level with :::
       return s;
     }
 
-    return stringify(node).slice(0, -1); // remove the excess ,
+    return stringify(node).slice(0, -3); // remove the excess :::
   }
 
   // constructs a TreeNode from the string representation of serializeTree
   static deserializeTree(s: string): TreeNode | null {
-    const items = s.split(',');
+    const items = s.split(':::'); // Split by ::: instead of comma
     let i = 0; // iterator
 
     function rebuild(): TreeNode | null {
       if (i === items.length) return null;
 
-      const splitted = items[i].split(':');
+      // Parse the item which may contain name:spouse|field=value|field=value
+      const parts = items[i].split('|');
+      const nameSpousePart = parts[0];
+
+      const splitted = nameSpousePart.split(':');
       const nodeName = splitted[0];
       const spouseName = splitted.length > 1 ? splitted[1] : null;
+
+      // Parse person data fields
+      const personData: PersonData = {};
+      for (let j = 1; j < parts.length; j++) {
+        const [key, ...valueParts] = parts[j].split('=');
+        const value = valueParts.join('='); // Handle = in values
+        if (key === 'nick') personData.nickname = value;
+        else if (key === 'birth') personData.birthDate = value;
+        else if (key === 'death') personData.deathDate = value;
+        else if (key === 'occ') personData.occupation = value;
+        else if (key === 'loc') personData.location = value;
+        else if (key === 'bio') personData.bio = value;
+        else if (key === 'pic') personData.profilePicture = value;
+      }
 
       const node = new TreeNode(
         nodeName,
         [],
         spouseName !== null ? new TreeNode(spouseName, []) : null,
+        Object.keys(personData).length > 0 ? personData : undefined,
       );
       i += 1;
 
@@ -423,11 +478,13 @@ export class TreeNode {
   static serializeTreeJSON(node: TreeNode): string {
     function convert(n: TreeNode): {
       name: string;
+      personData: PersonData;
       spouse: string | null;
       children: ReturnType<typeof convert>[];
     } {
       return {
         name: n.name,
+        personData: n.personData,
         spouse: n?.spouse?.name || null,
         children: n?.children.map(convert) || [],
       };
@@ -437,25 +494,61 @@ export class TreeNode {
 
   static deserializeTreeJSON(serialization: string): TreeNode {
     const simpleObject = JSON.parse(serialization);
-    function rebuild(obj: {
-      name: string;
-      spouse: string | null;
-      children: [];
-    }): TreeNode {
-      const node = new TreeNode(obj.name, []);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    function rebuild(obj: any): TreeNode {
+      const node = new TreeNode(obj.name, [], null, obj.personData);
+
       if (obj.spouse) {
         const spouseNode = new TreeNode(obj.spouse, []);
         spouseNode.isSpouse = true;
         node.spouse = spouseNode;
       }
-      node.children = obj.children.map(rebuild);
+
+      node.children = obj.children?.map(rebuild) || [];
       return node;
     }
+
     return rebuild(simpleObject);
   }
 
   isLeafNode() {
     return this.children.length == 0;
+  }
+
+  // Helper methods for person data
+  hasFullInfo(): boolean {
+    return !!(
+      this.personData.birthDate ||
+      this.personData.deathDate ||
+      this.personData.occupation ||
+      this.personData.location
+    );
+  }
+
+  getInitials(): string {
+    if (!this.name) return '?';
+    const parts = this.name.split(' ');
+    return parts
+      .map((p) => p[0])
+      .join('')
+      .substring(0, 2)
+      .toUpperCase();
+  }
+
+  getAge(): number | null {
+    if (!this.personData.birthDate) return null;
+    const birthYear = parseInt(this.personData.birthDate.split('-')[0]);
+    if (this.personData.deathDate) {
+      const deathYear = parseInt(this.personData.deathDate.split('-')[0]);
+      return deathYear - birthYear;
+    }
+    const currentYear = new Date().getFullYear();
+    return currentYear - birthYear;
+  }
+
+  getDisplayName(): string {
+    return this.personData.nickname || this.name;
   }
 
   getRightMostChildNode() {
