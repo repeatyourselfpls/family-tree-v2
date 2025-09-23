@@ -1,19 +1,21 @@
 import { createContext, useContext } from 'react';
 import { SidebarState } from '../components/Sidebar';
 import { ToastType } from '../hooks/useToastManager';
-import { TreeNode } from '../TreeModel/TreeNode';
+import { PersonData, TreeNode } from '../TreeModel/TreeNode';
 
 export type TreeContextType = {
   setRootNode: (node: TreeNode) => void;
   addDescendant: (parentNode: TreeNode, descendantName: string) => void;
   updateNodeName: (nodeToUpdate: TreeNode, newName: string) => void;
   updateSpouse: (parentNode: TreeNode, spouseName: string) => void;
+  updatePersonData: (nodeToUpdate: TreeNode, personData: PersonData) => void;
+
   setSidebarState: (newState: SidebarState) => void;
 
   serializeTree: (node: TreeNode) => string;
   serializeTreeJSON: (node: TreeNode) => string;
   deserializeTree: (serialization: string) => TreeNode | null;
-  deserializeTreeJSON: (serialization: string) => TreeNode | null;
+  deserializeTreeJSON: (serialization: string) => TreeNode;
 
   rootNode: TreeNode;
   showToast: (message: string, type: ToastType) => void;

@@ -386,6 +386,10 @@ export class TreeNode {
     nodeToUpdate.name = newName;
   }
 
+  static updatePersonData(nodeToUpdate: TreeNode, newPersonData: PersonData) {
+    nodeToUpdate.personData = { ...newPersonData };
+  }
+
   // returns a string representation of a family tree
   static serializeTree(node: TreeNode): string {
     function stringify(n: TreeNode) {

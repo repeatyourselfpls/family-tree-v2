@@ -20,8 +20,12 @@ import Toast from './components/Toast';
 import { TreeNodeData } from './components/types';
 import { TreeContext, TreeContextType } from './context/TreeContext';
 import { useToastManager } from './hooks/useToastManager';
-import { RADIUS, retrieveNodes, treeTwo } from './TreeModel/initializeTree';
-import { TreeNode } from './TreeModel/TreeNode';
+import {
+  RADIUS,
+  retrieveNodes,
+  richTreeExample,
+} from './TreeModel/initializeTree';
+import { PersonData, TreeNode } from './TreeModel/TreeNode';
 
 const nodeTypes = {
   mainNode: MainNode,
@@ -32,7 +36,7 @@ const nodeTypes = {
 function App() {
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance | null>(null);
-  const [rootNode, setRootNode] = useState<TreeNode>(treeTwo);
+  const [rootNode, setRootNode] = useState<TreeNode>(richTreeExample);
   const [treeVersion, setTreeVersion] = useState(0);
 
   const [theme, setTheme] = useState('light');
@@ -179,16 +183,21 @@ function App() {
 
   const updateNodeName = (nodeToUpdate: TreeNode, newName: string) => {
     TreeNode.updateName(nodeToUpdate, newName);
-    setTreeVersion((prevVersion) => prevVersion + 1);
+    setTreeVersion((prev) => prev + 1);
   };
 
   const updateSpouse = (parentNode: TreeNode, spouseName: string) => {
     TreeNode.updateSpouse(parentNode, spouseName);
-    setTreeVersion((prevVersion) => prevVersion + 1);
+    setTreeVersion((prev) => prev + 1);
   };
 
-  const serializeTree = (): string => {
-    return TreeNode.serializeTree(rootNode);
+  const updatePersonData = (nodeToUpdate: TreeNode, personData: PersonData) => {
+    TreeNode.updatePersonData(nodeToUpdate, personData);
+    setTreeVersion((prev) => prev + 1);
+  };
+
+  const serializeTree = (node: TreeNode): string => {
+    return TreeNode.serializeTree(node);
   };
 
   const deserializeTree = (serialization: string): TreeNode | null => {
@@ -212,6 +221,7 @@ function App() {
     addDescendant,
     updateNodeName,
     updateSpouse,
+    updatePersonData,
     setRootNode,
     serializeTree,
     deserializeTree,

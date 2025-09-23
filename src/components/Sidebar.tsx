@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTree } from '../context/TreeContext';
+import { PersonData } from '../TreeModel/TreeNode';
 import { TreeNodeData } from './types';
 
 export type SidebarState = {
@@ -12,17 +13,27 @@ export type SidebarProps = {
 };
 
 export default function Sidebar({ sidebarState }: SidebarProps) {
-  const { addDescendant, updateNodeName, updateSpouse } = useTree();
+  const { addDescendant, updateNodeName, updateSpouse, updatePersonData } =
+    useTree();
 
+  const [isEditMode, setIsEditMode] = useState(false);
   const [descendantValue, setDescendantValue] = useState('');
   const [nameValue, setNameValue] = useState('');
   const [spouseNameValue, setSpouseNameValue] = useState(
     sidebarState.selectedNode?.nodeRef.spouse?.name || '',
   );
+  const [personData, setPersonData] = useState<PersonData>({});
 
   useEffect(() => {
-    setNameValue(sidebarState.selectedNode?.nodeRef.name || '');
-    setDescendantValue('');
+    const node = sidebarState.selectedNode?.nodeRef;
+
+    if (node) {
+      setNameValue(node.name);
+      setSpouseNameValue(node.spouse?.name || '');
+      setPersonData({ ...node.personData });
+      setDescendantValue('');
+      setIsEditMode(false);
+    }
   }, [sidebarState.selectedNode]);
 
   function handleDescendantUpdate(e) {
@@ -32,93 +43,208 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
     }
   }
 
-  function handleNameUpdate(e) {
-    e.preventDefault();
-    if (sidebarState.selectedNode && nameValue !== '') {
-      updateNodeName(sidebarState.selectedNode.nodeRef, nameValue);
+  function handleSave() {
+    const node = sidebarState.selectedNode?.nodeRef;
+    if (!node) return;
+
+    if (nameValue !== node.name) {
+      updateNodeName(node, nameValue);
     }
-  }
 
-  function handleSpouseUpdate(e) {
-    e.preventDefault();
-    if (sidebarState.selectedNode && spouseNameValue) {
-      updateSpouse(sidebarState.selectedNode.nodeRef, spouseNameValue);
+    if (spouseNameValue !== (node.spouse?.name || '')) {
+      updateSpouse(node, spouseNameValue);
     }
+
+    updatePersonData(node, personData);
+    setIsEditMode(false);
   }
 
-  function handleNameChange(e) {
-    setNameValue(e.target.value);
+  function handleCancel() {
+    const node = sidebarState.selectedNode?.nodeRef;
+    if (node) {
+      setNameValue(node.name);
+      setSpouseNameValue(node.spouse?.name || '');
+      setPersonData({ ...node.personData });
+    }
+    setIsEditMode(false);
   }
 
-  function handleDescendantInputChange(e) {
-    setDescendantValue(e.target.value);
+  function updatePersonField(field: keyof PersonData, value: string) {
+    setPersonData((prev) => ({
+      ...prev,
+      [field]: value || undefined,
+    }));
   }
 
-  function handleSpouseInputChange(e) {
-    setSpouseNameValue(e.target.value);
-  }
+  const node = sidebarState.selectedNode?.nodeRef;
+  if (!node) return null;
 
   return (
-    <div id="sidebar">
-      <h3>{sidebarState.selectedNode?.nodeRef.name}</h3>
-      <div>
-        X: {sidebarState.selectedNode?.nodeRef.X} | Y:{' '}
-        {sidebarState.selectedNode?.nodeRef.Y}
-      </div>
-      <div>MOD: {sidebarState.selectedNode?.nodeRef.mod} </div>
-      <hr />
-
-      <label htmlFor="node-name">Update Name</label>
-      <div>
-        <input
-          type="text"
-          name="node-name"
-          id="node-name"
-          value={nameValue}
-          onChange={handleNameChange}
-        />
-      </div>
-      <input type="button" value="Update Name" onClick={handleNameUpdate} />
-
-      {!sidebarState.selectedNode?.nodeRef.isSpouse && (
-        <>
-          <hr />
-          <label htmlFor="descendant-name">Descendant Name</label>
-          <div>
-            <input
-              type="text"
-              name="descendant-name"
-              id="descendant-name"
-              placeholder="Enter descendant name"
-              value={descendantValue}
-              onChange={handleDescendantInputChange}
-            />
+    sidebarState.visible && (
+      <div id="sidebar">
+        <div className="sidebar-header">
+          <div className="sidebar-avatar">
+            {node.personData?.profilePicture ? (
+              <img
+                src={node.personData.profilePicture}
+                alt={`${node.name} avatar`}
+                className="sidebar-avatar-image"
+              />
+            ) : (
+              <div className="sidebar-avatar-initials">
+                {node.getInitials()}
+              </div>
+            )}
           </div>
-          <input
-            type="button"
-            value="Add descendant"
-            onClick={handleDescendantUpdate}
-          />
-
-          <hr />
-          <label htmlFor="spouse-name">Spouse Name</label>
-          <div>
-            <input
-              type="text"
-              name="spouse-name"
-              id="spouse-name"
-              placeholder="Enter spouse name"
-              value={spouseNameValue}
-              onChange={handleSpouseInputChange}
-            />
+          <div className="sidebar-header-info">
+            <h3>{node.getDisplayName()}</h3>
+            {node.getAge() && <p>Age {node.getAge()}</p>}
           </div>
-          <input
-            type="button"
-            value="Add or update existing spouse"
-            onClick={handleSpouseUpdate}
-          />
-        </>
-      )}
-    </div>
+          <div className="sidebar-header-actions">
+            {!isEditMode ? (
+              <button onClick={() => setIsEditMode(true)} className="edit-btn">
+                ✏️ Edit
+              </button>
+            ) : (
+              <div className="edit-actions">
+                <button onClick={handleSave} className="save-btn">
+                  ✅ Save
+                </button>
+                <button onClick={handleCancel} className="cancel-btn">
+                  ❌ Cancel
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+        {/* Main Content */}
+        <div className="sidebar-content">
+          {isEditMode ? (
+            /* Edit Mode - Form Fields */
+            <div className="edit-form">
+              <div className="form-group">
+                <label htmlFor="name">Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  value={nameValue}
+                  onChange={(e) => setNameValue(e.target.value)}
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="nickname">Nickname</label>
+                <input
+                  type="text"
+                  id="nickname"
+                  value={personData.nickname || ''}
+                  onChange={(e) =>
+                    updatePersonField('nickname', e.target.value)
+                  }
+                  placeholder="Optional nickname"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="birthDate">Birth Date</label>
+                <input
+                  type="date"
+                  id="birthDate"
+                  value={personData.birthDate || ''}
+                  onChange={(e) =>
+                    updatePersonField('birthDate', e.target.value)
+                  }
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="occupation">Occupation</label>
+                <input
+                  type="text"
+                  id="occupation"
+                  value={personData.occupation || ''}
+                  onChange={(e) =>
+                    updatePersonField('occupation', e.target.value)
+                  }
+                  placeholder="Job title"
+                />
+              </div>
+
+              {!node.isSpouse && (
+                <div className="form-group">
+                  <label htmlFor="spouse">Spouse Name</label>
+                  <input
+                    type="text"
+                    id="spouse"
+                    value={spouseNameValue}
+                    onChange={(e) => setSpouseNameValue(e.target.value)}
+                    placeholder="Enter spouse name"
+                  />
+                </div>
+              )}
+            </div>
+          ) : (
+            /* View Mode - Display Info */
+            <div className="view-info">
+              {node.personData?.birthDate && (
+                <div className="info-row">
+                  <strong>Born:</strong> {node.personData.birthDate}
+                </div>
+              )}
+
+              {node.personData?.occupation && (
+                <div className="info-row">
+                  <strong>Occupation:</strong> {node.personData.occupation}
+                </div>
+              )}
+
+              {node.spouse && (
+                <div className="info-row">
+                  <strong>Spouse:</strong> {node.spouse.name}
+                </div>
+              )}
+
+              {!node.personData?.birthDate &&
+                !node.personData?.occupation &&
+                !node.spouse && (
+                  <div className="info-row">
+                    <em>
+                      No additional information available. Click Edit to add
+                      details!
+                    </em>
+                  </div>
+                )}
+            </div>
+          )}
+
+          {/* Add Descendant Section */}
+          {!node.isSpouse && (
+            <div className="descendant-section">
+              <h4>Add Descendant</h4>
+              <div className="form-group">
+                <input
+                  type="text"
+                  value={descendantValue}
+                  onChange={(e) => setDescendantValue(e.target.value)}
+                  placeholder="Enter descendant name"
+                />
+                <button
+                  onClick={handleDescendantUpdate}
+                  disabled={!descendantValue}
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="debug-info">
+          <div>
+            X: {node.X} | Y: {node.Y}
+          </div>
+          <div>MOD: {node.mod}</div>
+        </div>
+      </div>
+    )
   );
 }
