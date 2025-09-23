@@ -38,7 +38,10 @@ export class TreeNode {
     this.personData = personData || {};
     this.children = children;
     this.spouse = spouse;
-    if (this.spouse) this.spouse.isSpouse = true;
+    if (this.spouse) {
+      this.spouse.isSpouse = true;
+      this.spouse.parent = this;
+    }
   }
 
   // Attaches previous siblings and a base Y for each level
@@ -372,13 +375,14 @@ export class TreeNode {
     return traversal;
   }
 
-  static updateSpouse(parentNode: TreeNode, spouseName: string) {
-    if (parentNode.spouse) {
-      parentNode.spouse.name = spouseName;
+  static updateSpouse(mainNode: TreeNode, spouseName: string) {
+    if (mainNode.spouse) {
+      mainNode.spouse.name = spouseName;
     } else {
       const spouseNode = new TreeNode(spouseName, []);
       spouseNode.isSpouse = true;
-      parentNode.spouse = spouseNode;
+      spouseNode.parent = mainNode;
+      mainNode.spouse = spouseNode;
     }
   }
 
