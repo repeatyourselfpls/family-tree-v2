@@ -57,7 +57,7 @@ export default function MainNode(props: NodeProps<MainNodeType>) {
             type="source"
             position={Position.Right}
             isConnectable={props.isConnectable}
-            id="bridgeSource"
+            id="right"
           />
         </>
       ) : (

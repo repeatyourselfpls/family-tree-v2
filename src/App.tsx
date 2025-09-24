@@ -11,7 +11,7 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useCallback, useEffect, useState } from 'react';
-import BridgeNode from './components/BridgeNode';
+import BridgeNode, { BRIDGE_OFFSET } from './components/BridgeNode';
 import MainNode from './components/MainNode';
 import { Navbar } from './components/Navbar';
 import Sidebar, { SidebarState } from './components/Sidebar';
@@ -21,6 +21,7 @@ import { TreeNodeData } from './components/types';
 import { TreeContext, TreeContextType } from './context/TreeContext';
 import { useToastManager } from './hooks/useToastManager';
 import {
+  GAP_X,
   MAX_NODE_HEIGHT,
   MAX_NODE_WIDTH,
   retrieveNodes,
@@ -104,33 +105,44 @@ function App() {
       });
 
       if (n.spouse) {
-        // Add the hidden bridge node
+        // Add the bridge node positioned in the gap between spouses
+        // Bridge starts at midpoint and extends downward
         calculatedNodes.push({
           id: n.name + 'Bridge',
           position: {
-            x: n.positionedX + MAX_NODE_WIDTH,
-            y: n.positionedY + MAX_NODE_HEIGHT / 2,
+            x: n.positionedX + MAX_NODE_WIDTH + GAP_X / 2, // Start at right edge of main node
+            y: n.positionedY + MAX_NODE_HEIGHT / 2 + BRIDGE_OFFSET, // Start at vertical midpoint of nodes
           },
           data: nodeData,
           type: 'bridgeNode',
+          width: 1,
+          height: MAX_NODE_HEIGHT / 2 - BRIDGE_OFFSET,
+          style: {
+            width: 1,
+            height: MAX_NODE_HEIGHT / 2 - BRIDGE_OFFSET,
+            visibility: 'hidden',
+            background: 'red',
+            pointerEvents: 'none',
+          },
           draggable: false,
         });
 
-        // Add the spouses to bridge
+        // Add the spouses to bridge (T-junction)
         calculatedEdges.push(
           {
             id: `${n.name}-${n.name}Bridge`,
             source: `${n.name}`,
             target: n.name + 'Bridge',
-            sourceHandle: 'bridgeSource',
-            targetHandle: 'spouseTarget',
+            sourceHandle: 'right', // From right side of main
+            targetHandle: 'spouseTarget', // To top of bridge
             type: 'straight',
           },
           {
             id: `${n.spouse.name}-${n.name}Bridge`,
             source: `${n.spouse.name}`,
             target: n.name + 'Bridge',
-            targetHandle: 'spouseTarget',
+            sourceHandle: 'left', // From left side of spouse
+            targetHandle: 'spouseTarget', // To same top point of bridge
             type: 'straight',
           },
         );
@@ -138,12 +150,24 @@ function App() {
 
       if (n.parent && n.parent.spouse) {
         // Add bridge to descendants
-        calculatedEdges.push({
-          id: `${n.parent.name}Bridge-${n.name}`,
-          source: `${n.parent.name}Bridge`,
-          target: n.name,
-          type: 'smoothstep',
-        });
+        calculatedEdges.push(
+          {
+            id: `${n.parent.name}Bridge-${n.name}`,
+            source: `${n.parent.name}Bridge`,
+            target: n.name,
+            sourceHandle: 'childrenSource', // From bottom of bridge
+            type: 'smoothstep',
+          },
+          // edge through the bridge
+          {
+            id: `${n.parent.name}BridgeSource-${n.parent.name}BridgeTarget`,
+            source: n.parent.name + 'Bridge',
+            target: n.parent.name + 'Bridge',
+            sourceHandle: 'childrenSource', // From bottom bridge
+            targetHandle: 'spouseTarget', // To top bridge
+            type: 'straight',
+          },
+        );
       } else if (n.parent) {
         // Add the connection from the parent
         calculatedEdges.push({
@@ -237,39 +261,43 @@ function App() {
     toggleTheme,
   };
 
-  // const onNodesChange = useCallback((changes) => {
-  //   setNodes((previousNodes) => {
-  //     const updatedNodes = applyNodeChanges(changes, previousNodes);
+  const onNodesChange = useCallback((changes) => {
+    setNodes((previousNodes) => {
+      const updatedNodes = applyNodeChanges(changes, previousNodes);
 
-  //     return updatedNodes.map((node) => {
-  //       // Check if THIS node is a bridge node
-  //       if (node.type === 'bridgeNode') {
-  //         const mainNodeId = node.id.replace('Bridge', '');
-  //         const mainNode = updatedNodes.find((n) => n.id === mainNodeId);
-  //         const spouseNode = updatedNodes.find(
-  //           (n) =>
-  //             n.id === (mainNode?.data as TreeNodeData).nodeRef.spouse?.name,
-  //         );
+      return updatedNodes.map((node) => {
+        if (node.type === 'bridgeNode') {
+          const mainNodeId = node.id.replace('Bridge', '');
+          const mainNode = updatedNodes.find((n) => n.id === mainNodeId);
+          const spouseNode = updatedNodes.find(
+            (n) =>
+              n.id === (mainNode?.data as TreeNodeData).nodeRef.spouse?.name,
+          );
 
-  //         if (mainNode && spouseNode) {
-  //           return {
-  //             ...node,
-  //             position: {
-  //               x: (mainNode.position.x + spouseNode.position.x) / 2,
-  //               y: (mainNode.position.y + spouseNode.position.y) / 2,
-  //             },
-  //           };
-  //         }
-  //       }
-  //       return node; // Return unchanged for non-bridge nodes
-  //     });
-  //   });
-  // }, []);
+          if (mainNode && spouseNode) {
+            return {
+              ...node,
+              position: {
+                x:
+                  (mainNode.position.x +
+                    MAX_NODE_WIDTH +
+                    spouseNode.position.x) /
+                  2,
+                y:
+                  (mainNode.position.y +
+                    spouseNode.position.y +
+                    MAX_NODE_HEIGHT +
+                    BRIDGE_OFFSET * 2) /
+                  2,
+              },
+            };
+          }
+        }
+        return node;
+      });
+    });
+  }, []);
 
-  const onNodesChange2 = useCallback(
-    (changes) => setNodes((eds) => applyNodeChanges(changes, eds)),
-    [],
-  );
   const onEdgesChange = useCallback(
     (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
     [],
@@ -289,7 +317,7 @@ function App() {
         <ReactFlow
           nodes={nodes}
           edges={edges}
-          onNodesChange={onNodesChange2}
+          onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           nodeTypes={nodeTypes}

@@ -20,6 +20,7 @@ export default function SpouseNode(props: NodeProps<SpouseNodeType>) {
         type="source"
         position={Position.Left}
         isConnectable={props.isConnectable}
+        id="left"
       />
 
       <div className="person-avatar">
