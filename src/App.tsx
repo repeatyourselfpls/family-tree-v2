@@ -35,6 +35,10 @@ const nodeTypes = {
   bridgeNode: BridgeNode,
 }; // prevent re-renderings
 
+export type AppConfig = {
+  mode: 'dev' | 'prd';
+};
+
 function App() {
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance | null>(null);
@@ -259,6 +263,7 @@ function App() {
 
     theme,
     toggleTheme,
+    cfg: { mode: 'prd' },
   };
 
   const onNodesChange = useCallback((changes) => {

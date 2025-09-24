@@ -1,4 +1,5 @@
 import { createContext, useContext } from 'react';
+import { AppConfig } from '../App';
 import { SidebarState } from '../components/Sidebar';
 import { ToastType } from '../hooks/useToastManager';
 import { PersonData, TreeNode } from '../TreeModel/TreeNode';
@@ -22,6 +23,8 @@ export type TreeContextType = {
 
   theme: string;
   toggleTheme: () => void;
+
+  cfg: AppConfig;
 };
 
 export const TreeContext = createContext<TreeContextType | null>(null);

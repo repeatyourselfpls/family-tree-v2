@@ -2,7 +2,7 @@ import { TreeNode } from './TreeNode';
 
 // Fixed node dimensions
 export const MAX_NODE_WIDTH = 160;
-export const MAX_NODE_HEIGHT = 100;
+export const MAX_NODE_HEIGHT = 180;
 
 // Spacing with gaps to prevent overlaps
 export const GAP_X = 40;
@@ -50,8 +50,8 @@ const SP = new TreeNode('SP', []);
 const BS = new TreeNode('BS', [SP]);
 
 const SH = new TreeNode('SH', []);
-const DJ = new TreeNode('DJ', []);
 const EI = new TreeNode('EI', []);
+const DJ = new TreeNode('DJ', []);
 const YI = new TreeNode('YI', [SH, DJ, EI]);
 
 const LO = new TreeNode('LO', []);

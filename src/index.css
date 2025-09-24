@@ -1,6 +1,8 @@
 :root[data-theme='light'] {
   --text: #08110e;
+  --node-text: #08110e;
   --background: #f4fbf8;
+  --background-rgb: rgba(244, 251, 248);
   --primary: #3dd6a1;
   --secondary: #0f855c;
   --accent: #38fab6;
@@ -11,7 +13,9 @@
 
 :root[data-theme='dark'] {
   --text: #eef7f4;
+  --node-text: #08110e;
   --background: #040b08;
+  --background-rgb: rgba(4, 11, 8);
   --primary: #29c28c;
   --secondary: #0f855c;
   --accent: #05c783;
@@ -255,8 +259,6 @@ body {
 }
 
 .main-node {
-  width: 160px;
-  height: 100px;
   background: var(--primary);
   padding: 8px;
   border: 1px solid var(--accent);
@@ -270,6 +272,7 @@ body {
   align-items: center;
   justify-content: flex-start;
   overflow: hidden;
+  gap: 1px;
 }
 
 .main-node:hover {
@@ -301,13 +304,11 @@ body {
   justify-content: center;
   font-weight: bold;
   font-size: 12px;
-  color: var(--background);
+  color: var(--text);
   border: 2px solid var(--accent);
 }
 
 .spouse-node {
-  width: 160px;
-  height: 100px;
   background: var(--primary);
   padding: 8px;
   border: 1px solid var(--accent);
@@ -321,6 +322,7 @@ body {
   align-items: center;
   justify-content: flex-start;
   overflow: hidden;
+  gap: 1px;
 }
 
 .spouse-node:hover {
@@ -328,4 +330,39 @@ body {
   border-radius: 8px;
   transform: scale(1.05);
   cursor: pointer;
+}
+
+.node-name {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 6px;
+  color: var(--node-text);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  letter-spacing: 0.3px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.node-age {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--node-text);
+  margin-bottom: 3px;
+  opacity: 0.8;
+}
+
+.node-occupation {
+  font-size: 8px;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--node-text);
+  line-height: 1;
+  opacity: 0.65;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

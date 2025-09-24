@@ -555,6 +555,16 @@ export class TreeNode {
     return currentYear - birthYear;
   }
 
+  getFormattedLifespan(): string | null {
+    if (!this.personData.birthDate) return null;
+    const birthYear = parseInt(this.personData.birthDate.split('-')[0]);
+    if (this.personData.deathDate) {
+      const deathYear = parseInt(this.personData.deathDate.split('-')[0]);
+      return `${birthYear} - ${deathYear} (${deathYear - birthYear})`;
+    }
+    return `b. ${birthYear} (${new Date().getFullYear() - birthYear})`;
+  }
+
   getDisplayName(): string {
     return this.personData.nickname || this.name;
   }
