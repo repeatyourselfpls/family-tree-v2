@@ -8,7 +8,7 @@ export default function BridgeNode(props: NodeProps<BridgeNodeType>) {
     <div className="bridge-node">
       <Handle
         type="target"
-        position={Position.Bottom}
+        position={Position.Top}
         isConnectable={props.isConnectable}
         id="spouseTarget"
       />

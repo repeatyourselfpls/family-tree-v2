@@ -38,14 +38,14 @@ export default function MainNode(props: NodeProps<MainNodeType>) {
         )}
       </div>
 
-      <div>{props.data?.nodeRef.getDisplayName()}</div>
+      <div>{props.data?.nodeRef.getTruncatedDisplayName()}</div>
 
       {props.data?.nodeRef.getAge() && (
         <div>Age {props.data?.nodeRef.getAge()}</div>
       )}
 
       {props.data?.nodeRef.personData.occupation && (
-        <div>Occupation {props.data?.nodeRef.personData.occupation}</div>
+        <div>{props.data?.nodeRef.getTruncatedOccupation()}</div>
       )}
 
       <div>{props.data?.nodeRef.X}</div>

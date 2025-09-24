@@ -255,8 +255,8 @@ body {
 }
 
 .main-node {
-  min-height: 80px;
-  width: 120px;
+  width: 160px;
+  height: 100px;
   background: var(--primary);
   padding: 8px;
   border: 1px solid var(--accent);
@@ -265,6 +265,11 @@ body {
   transition: all 0.2s ease-in-out;
   text-align: center;
   font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
 }
 
 .main-node:hover {
@@ -301,14 +306,21 @@ body {
 }
 
 .spouse-node {
-  min-height: 50px;
-  width: 100px;
+  width: 160px;
+  height: 100px;
   background: var(--primary);
-  padding: 5px;
-  border: 1px solid rgb(250, 168, 182);
-  border-radius: 5px;
+  padding: 8px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
   box-sizing: border-box;
   transition: all 0.2s ease-in-out;
+  text-align: center;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
 }
 
 .spouse-node:hover {
@@ -319,9 +331,9 @@ body {
 }
 
 .bridge-node {
-  width: 100px;
-  min-height: 28.5px;
-  background-color: aliceblue;
-  opacity: 0;
+  width: 40px;
+  height: 50px;
+  background-color: wheat;
+  opacity: 1;
   pointer-events: none;
 }

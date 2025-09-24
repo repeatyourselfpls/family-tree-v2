@@ -559,6 +559,21 @@ export class TreeNode {
     return this.personData.nickname || this.name;
   }
 
+  // Truncation helpers for fixed dimensions
+  getTruncatedDisplayName(maxLength = 18): string {
+    const displayName = this.getDisplayName();
+    return displayName.length > maxLength
+      ? displayName.substring(0, maxLength - 3) + '...'
+      : displayName;
+  }
+
+  getTruncatedOccupation(maxLength = 15): string {
+    const occupation = this.personData.occupation || '';
+    return occupation.length > maxLength
+      ? occupation.substring(0, maxLength - 3) + '...'
+      : occupation;
+  }
+
   getRightMostChildNode() {
     return this.children.slice(-1)[0];
   }

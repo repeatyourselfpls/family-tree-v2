@@ -1,8 +1,14 @@
 import { TreeNode } from './TreeNode';
 
-export const RADIUS = 50; // Box_size
-export const SPACING_X = RADIUS * 2 * 2;
-export const SPACING_Y = 150;
+// Fixed node dimensions
+export const MAX_NODE_WIDTH = 160;
+export const MAX_NODE_HEIGHT = 100;
+
+// Spacing with gaps to prevent overlaps
+export const GAP_X = 40;
+export const GAP_Y = 50;
+export const SPACING_X = MAX_NODE_WIDTH + GAP_X; // 200px
+export const SPACING_Y = MAX_NODE_HEIGHT + GAP_Y; // 150px
 
 export function retrieveNodes(rootNode: TreeNode) {
   TreeNode.initializeNodes(rootNode, null, null, null, 0);

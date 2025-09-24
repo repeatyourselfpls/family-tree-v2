@@ -21,7 +21,8 @@ import { TreeNodeData } from './components/types';
 import { TreeContext, TreeContextType } from './context/TreeContext';
 import { useToastManager } from './hooks/useToastManager';
 import {
-  RADIUS,
+  MAX_NODE_HEIGHT,
+  MAX_NODE_WIDTH,
   retrieveNodes,
   richTreeExample,
 } from './TreeModel/initializeTree';
@@ -106,11 +107,13 @@ function App() {
         // Add the hidden bridge node
         calculatedNodes.push({
           id: n.name + 'Bridge',
-          position: { x: n.positionedX + RADIUS * 2, y: n.positionedY },
+          position: {
+            x: n.positionedX + MAX_NODE_WIDTH,
+            y: n.positionedY + MAX_NODE_HEIGHT / 2,
+          },
           data: nodeData,
           type: 'bridgeNode',
           draggable: false,
-          style: { opacity: 0, pointerEvents: 'none' }, // Completely invisible
         });
 
         // Add the spouses to bridge
@@ -234,35 +237,39 @@ function App() {
     toggleTheme,
   };
 
-  const onNodesChange = useCallback((changes) => {
-    setNodes((previousNodes) => {
-      const updatedNodes = applyNodeChanges(changes, previousNodes);
+  // const onNodesChange = useCallback((changes) => {
+  //   setNodes((previousNodes) => {
+  //     const updatedNodes = applyNodeChanges(changes, previousNodes);
 
-      return updatedNodes.map((node) => {
-        // Check if THIS node is a bridge node
-        if (node.type === 'bridgeNode') {
-          const mainNodeId = node.id.replace('Bridge', '');
-          const mainNode = updatedNodes.find((n) => n.id === mainNodeId);
-          const spouseNode = updatedNodes.find(
-            (n) =>
-              n.id === (mainNode?.data as TreeNodeData).nodeRef.spouse?.name,
-          );
+  //     return updatedNodes.map((node) => {
+  //       // Check if THIS node is a bridge node
+  //       if (node.type === 'bridgeNode') {
+  //         const mainNodeId = node.id.replace('Bridge', '');
+  //         const mainNode = updatedNodes.find((n) => n.id === mainNodeId);
+  //         const spouseNode = updatedNodes.find(
+  //           (n) =>
+  //             n.id === (mainNode?.data as TreeNodeData).nodeRef.spouse?.name,
+  //         );
 
-          if (mainNode && spouseNode) {
-            return {
-              ...node,
-              position: {
-                x: (mainNode.position.x + spouseNode.position.x) / 2,
-                y: (mainNode.position.y + spouseNode.position.y) / 2,
-              },
-            };
-          }
-        }
-        return node; // Return unchanged for non-bridge nodes
-      });
-    });
-  }, []);
+  //         if (mainNode && spouseNode) {
+  //           return {
+  //             ...node,
+  //             position: {
+  //               x: (mainNode.position.x + spouseNode.position.x) / 2,
+  //               y: (mainNode.position.y + spouseNode.position.y) / 2,
+  //             },
+  //           };
+  //         }
+  //       }
+  //       return node; // Return unchanged for non-bridge nodes
+  //     });
+  //   });
+  // }, []);
 
+  const onNodesChange2 = useCallback(
+    (changes) => setNodes((eds) => applyNodeChanges(changes, eds)),
+    [],
+  );
   const onEdgesChange = useCallback(
     (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
     [],
@@ -282,7 +289,7 @@ function App() {
         <ReactFlow
           nodes={nodes}
           edges={edges}
-          onNodesChange={onNodesChange}
+          onNodesChange={onNodesChange2}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           nodeTypes={nodeTypes}
