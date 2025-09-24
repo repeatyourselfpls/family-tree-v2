@@ -49,7 +49,7 @@ export const Navbar = () => {
 
       URL.revokeObjectURL(url);
 
-      showToast('File saved', 'success');
+      showToast('File download started', 'success');
     } catch (err) {
       console.error(err);
       showToast('Error saving file', 'error');
