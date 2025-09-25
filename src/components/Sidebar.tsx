@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTree } from '../context/TreeContext';
 import { PersonData } from '../TreeModel/TreeNode';
+import { EditableField } from './EditableField';
 import { TreeNodeData } from './types';
 
 export type SidebarState = {
@@ -16,7 +17,6 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
   const { addDescendant, updateNodeName, updateSpouse, updatePersonData } =
     useTree();
 
-  const [isEditMode, setIsEditMode] = useState(false);
   const [descendantValue, setDescendantValue] = useState('');
   const [nameValue, setNameValue] = useState('');
   const [spouseNameValue, setSpouseNameValue] = useState(
@@ -32,7 +32,6 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
       setSpouseNameValue(node.spouse?.name || '');
       setPersonData({ ...node.personData });
       setDescendantValue('');
-      setIsEditMode(false);
     }
   }, [sidebarState.selectedNode]);
 
@@ -56,17 +55,6 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
     }
 
     updatePersonData(node, personData);
-    setIsEditMode(false);
-  }
-
-  function handleCancel() {
-    const node = sidebarState.selectedNode?.nodeRef;
-    if (node) {
-      setNameValue(node.name);
-      setSpouseNameValue(node.spouse?.name || '');
-      setPersonData({ ...node.personData });
-    }
-    setIsEditMode(false);
   }
 
   function updatePersonField(field: keyof PersonData, value: string) {
@@ -74,6 +62,8 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
       ...prev,
       [field]: value || undefined,
     }));
+
+    handleSave();
   }
 
   const node = sidebarState.selectedNode?.nodeRef;
@@ -97,146 +87,54 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
             )}
           </div>
           <div className="sidebar-header-info">
-            <h3>{node.getDisplayName()}</h3>
+            <h3>
+              <EditableField
+                labelName="Name"
+                onSave={() => {
+                  console.log('saving');
+                }}
+                placeholder="Enter a name"
+                type="text"
+                value={node.getDisplayName()}
+              />
+            </h3>
             {node.getAge() && <p>Age {node.getAge()}</p>}
-          </div>
-          <div className="sidebar-header-actions">
-            {!isEditMode ? (
-              <button onClick={() => setIsEditMode(true)} className="edit-btn">
-                ✏️ Edit
-              </button>
-            ) : (
-              <div className="edit-actions">
-                <button onClick={handleSave} className="save-btn">
-                  ✅ Save
-                </button>
-                <button onClick={handleCancel} className="cancel-btn">
-                  ❌ Cancel
-                </button>
-              </div>
-            )}
           </div>
         </div>
         {/* Main Content */}
         <div className="sidebar-content">
-          {isEditMode ? (
-            /* Edit Mode - Form Fields */
-            <div className="edit-form">
-              <div className="form-group">
-                <label htmlFor="name">Name</label>
-                <input
-                  type="text"
-                  id="name"
-                  value={nameValue}
-                  onChange={(e) => setNameValue(e.target.value)}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="nickname">Nickname</label>
-                <input
-                  type="text"
-                  id="nickname"
-                  value={personData.nickname || ''}
-                  onChange={(e) =>
-                    updatePersonField('nickname', e.target.value)
-                  }
-                  placeholder="Optional nickname"
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="birthDate">Birth Date</label>
-                <input
-                  type="date"
-                  id="birthDate"
-                  value={personData.birthDate || ''}
-                  onChange={(e) =>
-                    updatePersonField('birthDate', e.target.value)
-                  }
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="occupation">Occupation</label>
-                <input
-                  type="text"
-                  id="occupation"
-                  value={personData.occupation || ''}
-                  onChange={(e) =>
-                    updatePersonField('occupation', e.target.value)
-                  }
-                  placeholder="Job title"
-                />
-              </div>
-
-              {!node.isSpouse && (
-                <div className="form-group">
-                  <label htmlFor="spouse">Spouse Name</label>
-                  <input
-                    type="text"
-                    id="spouse"
-                    value={spouseNameValue}
-                    onChange={(e) => setSpouseNameValue(e.target.value)}
-                    placeholder="Enter spouse name"
-                  />
-                </div>
-              )}
-            </div>
-          ) : (
-            /* View Mode - Display Info */
-            <div className="view-info">
-              {node.personData?.birthDate && (
-                <div className="info-row">
-                  <strong>Born:</strong> {node.personData.birthDate}
-                </div>
-              )}
-
-              {node.personData?.occupation && (
-                <div className="info-row">
-                  <strong>Occupation:</strong> {node.personData.occupation}
-                </div>
-              )}
-
-              {node.spouse && (
-                <div className="info-row">
-                  <strong>Spouse:</strong> {node.spouse.name}
-                </div>
-              )}
-
-              {!node.personData?.birthDate &&
-                !node.personData?.occupation &&
-                !node.spouse && (
-                  <div className="info-row">
-                    <em>
-                      No additional information available. Click Edit to add
-                      details!
-                    </em>
-                  </div>
-                )}
-            </div>
-          )}
-
-          {/* Add Descendant Section */}
-          {!node.isSpouse && (
-            <div className="descendant-section">
-              <h4>Add Descendant</h4>
-              <div className="form-group">
-                <input
-                  type="text"
-                  value={descendantValue}
-                  onChange={(e) => setDescendantValue(e.target.value)}
-                  placeholder="Enter descendant name"
-                />
-                <button
-                  onClick={handleDescendantUpdate}
-                  disabled={!descendantValue}
-                >
-                  Add
-                </button>
-              </div>
-            </div>
-          )}
+          <EditableField
+            labelName="Birthday"
+            onSave={updatePersonField}
+            placeholder=""
+            fieldType="date"
+            saveKey="birthDate"
+            value={node.personData.birthDate!}
+          />
+          <EditableField
+            labelName="Deathday"
+            onSave={updatePersonField}
+            placeholder=""
+            fieldType="date"
+            saveKey="deathDate"
+            value={node.personData.deathDate!}
+          />
+          <EditableField
+            labelName="Occupation"
+            onSave={updatePersonField}
+            placeholder="Enter an occupation"
+            fieldType="text"
+            saveKey="occupation"
+            value={node.personData.occupation || ''}
+          />
+          <EditableField
+            labelName="Biography"
+            onSave={updatePersonField}
+            placeholder="Enter your biography here"
+            fieldType="textarea"
+            saveKey="bio"
+            value={node.personData.occupation || ''}
+          />
         </div>
         <div className="debug-info">
           <div>

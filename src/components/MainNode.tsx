@@ -13,8 +13,6 @@ export default function MainNode(props: NodeProps<MainNodeType>) {
   // on mount
   useEffect(() => {
     if (mainNodeRef.current) {
-      console.log('trying to set the noides widthe and hegight');
-
       mainNodeRef.current.style.setProperty(
         'width',
         `${MAX_NODE_WIDTH}px`,

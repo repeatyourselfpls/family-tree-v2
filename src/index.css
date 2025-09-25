@@ -366,3 +366,12 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.editable-label {
+  transition: all 0.2s ease-in-out;
+}
+
+.editable-label:hover {
+  transform: scale(1.01);
+  background-color: rgba(173, 253, 223, 0.15);
+}
