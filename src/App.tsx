@@ -207,18 +207,30 @@ function App() {
     const newChild = new TreeNode(descendantName, []);
     parentNode.children.push(newChild);
 
-    setTreeVersion((prevVersion) => prevVersion + 1);
+    setTreeVersion((prev) => prev + 1);
+  };
 
-    setSidebarState({ visible: false, selectedNode: null });
+  const removeDescendant = (parentNode: TreeNode, childToRemove: TreeNode) => {
+    const i = parentNode.children.indexOf(childToRemove);
+    if (i > -1) {
+      parentNode.children.splice(i, 1);
+    }
+
+    setTreeVersion((prev) => prev + 1);
+  };
+
+  const addSpouse = (node: TreeNode, spouseName: string) => {
+    TreeNode.addSpouse(node, spouseName);
+    setTreeVersion((prev) => prev + 1);
+  };
+
+  const removeSpouse = (node: TreeNode) => {
+    TreeNode.removeSpouse(node);
+    setTreeVersion((prev) => prev + 1);
   };
 
   const updateNodeName = (nodeToUpdate: TreeNode, newName: string) => {
     TreeNode.updateName(nodeToUpdate, newName);
-    setTreeVersion((prev) => prev + 1);
-  };
-
-  const updateSpouse = (parentNode: TreeNode, spouseName: string) => {
-    TreeNode.updateSpouse(parentNode, spouseName);
     setTreeVersion((prev) => prev + 1);
   };
 
@@ -250,8 +262,10 @@ function App() {
     showToast,
     setSidebarState,
     addDescendant,
+    removeDescendant,
+    addSpouse,
+    removeSpouse,
     updateNodeName,
-    updateSpouse,
     updatePersonData,
     setRootNode,
     serializeTree,

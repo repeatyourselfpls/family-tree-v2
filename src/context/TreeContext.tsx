@@ -7,8 +7,10 @@ import { PersonData, TreeNode } from '../TreeModel/TreeNode';
 export type TreeContextType = {
   setRootNode: (node: TreeNode) => void;
   addDescendant: (parentNode: TreeNode, descendantName: string) => void;
+  removeDescendant: (parentNode: TreeNode, childToRemove: TreeNode) => void;
+  addSpouse: (node: TreeNode, spouseName: string) => void;
+  removeSpouse: (node: TreeNode) => void;
   updateNodeName: (nodeToUpdate: TreeNode, newName: string) => void;
-  updateSpouse: (parentNode: TreeNode, spouseName: string) => void;
   updatePersonData: (nodeToUpdate: TreeNode, personData: PersonData) => void;
 
   setSidebarState: (newState: SidebarState) => void;

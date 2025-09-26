@@ -375,6 +375,17 @@ export class TreeNode {
     return traversal;
   }
 
+  static removeSpouse(mainNode: TreeNode) {
+    mainNode.spouse = null;
+  }
+
+  static addSpouse(mainNode: TreeNode, spouseName: string) {
+    const spouseNode = new TreeNode(spouseName, [], null, {});
+    mainNode.spouse = spouseNode;
+    spouseNode.isSpouse = true;
+    spouseNode.parent = mainNode;
+  }
+
   static updateSpouse(mainNode: TreeNode, spouseName: string) {
     if (mainNode.spouse) {
       mainNode.spouse.name = spouseName;
@@ -544,6 +555,15 @@ export class TreeNode {
       .toUpperCase();
   }
 
+  getSpouseName(): string {
+    if (this.isSpouse) {
+      return this.parent!.getDisplayName();
+    } else if (this.spouse) {
+      return this.spouse.getDisplayName();
+    }
+    return '';
+  }
+
   getAge(): number | null {
     if (!this.personData.birthDate) return null;
     const birthYear = parseInt(this.personData.birthDate.split('-')[0]);
@@ -577,11 +597,31 @@ export class TreeNode {
       : displayName;
   }
 
+  getOccupation(): string {
+    return this.personData.occupation || '';
+  }
+
   getTruncatedOccupation(maxLength = 15): string {
     const occupation = this.personData.occupation || '';
     return occupation.length > maxLength
       ? occupation.substring(0, maxLength - 3) + '...'
       : occupation;
+  }
+
+  getBirthday(): string {
+    return this.personData.birthDate || '';
+  }
+
+  getDeathday(): string {
+    return this.personData.deathDate || '';
+  }
+
+  getLocation(): string {
+    return this.personData.location || '';
+  }
+
+  getBio(): string {
+    return this.personData.bio || '';
   }
 
   getRightMostChildNode() {
