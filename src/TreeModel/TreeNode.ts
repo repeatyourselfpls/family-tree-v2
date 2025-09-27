@@ -564,6 +564,13 @@ export class TreeNode {
     return '';
   }
 
+  getDescendantName(descendantKey: string) {
+    if (this.children.length !== 0) {
+      return this.children.find((c) => c.name === descendantKey)?.name || '';
+    }
+    return '';
+  }
+
   getAge(): number | null {
     if (!this.personData.birthDate) return null;
     const birthYear = parseInt(this.personData.birthDate.split('-')[0]);

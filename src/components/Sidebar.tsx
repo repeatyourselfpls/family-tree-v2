@@ -1,4 +1,7 @@
+import { useTree } from '../context/TreeContext';
+import { DescendantsList } from './DescendantsList';
 import { EditableField } from './EditableField';
+import { SpouseField } from './SpouseField';
 import { TreeNodeData } from './types';
 
 export type SidebarState = {
@@ -11,6 +14,7 @@ export type SidebarProps = {
 };
 
 export default function Sidebar({ sidebarState }: SidebarProps) {
+  const { setSidebarState } = useTree();
   const node = sidebarState.selectedNode?.nodeRef;
   if (!node) return null;
 
@@ -46,36 +50,20 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
         {/* Main Content */}
         <div className="sidebar-content">
           <h4>Basic Info</h4>
-          <EditableField
-            placeholder=""
-            fieldType="birthDate"
-            nodeRef={node}
-            inputType="date"
-          />
-          <EditableField
-            placeholder=""
-            fieldType="deathDate"
-            nodeRef={node}
-            inputType="date"
-          />
-          <EditableField
-            placeholder=""
-            fieldType="occupation"
-            nodeRef={node}
-            inputType="text"
-          />
-          <EditableField
-            placeholder=""
-            fieldType="bio"
-            nodeRef={node}
-            inputType="textarea"
-          />
+          <EditableField fieldType="name" nodeRef={node} />
+          <EditableField fieldType="birthDate" nodeRef={node} />
+          <EditableField fieldType="occupation" nodeRef={node} />
+
           <h4>Relationships</h4>
-          <EditableField
-            placeholder=""
-            fieldType="spouse"
-            nodeRef={node}
-            inputType="text"
+          <SpouseField node={node} />
+          <DescendantsList
+            parent={node}
+            onNavigate={(child) =>
+              setSidebarState({
+                selectedNode: { nodeRef: child },
+                visible: true,
+              })
+            }
           />
         </div>
         {/* <div className="debug-info">

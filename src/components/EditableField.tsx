@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
+import { MdDeleteOutline, MdSave } from 'react-icons/md';
 import { TreeNode } from '../TreeModel/TreeNode';
 import { useTree } from '../context/TreeContext';
 
 type FieldType =
   | 'name'
-  | 'spouse'
   | 'birthDate'
   | 'deathDate'
   | 'occupation'
@@ -24,14 +24,7 @@ export const EditableField = ({
   placeholder,
   inputType,
 }: EditableFieldProps) => {
-  const {
-    updateNodeName,
-    addSpouse,
-    removeSpouse,
-    addDescendant,
-    removeDescendant,
-    updatePersonData,
-  } = useTree();
+  const { updateNodeName, updatePersonData } = useTree();
 
   const [isEditing, setEditing] = useState(false);
   const [localValue, setLocalValue] = useState(
@@ -47,8 +40,6 @@ export const EditableField = ({
     switch (fieldType) {
       case 'name':
         return nodeRef.getDisplayName();
-      case 'spouse':
-        return nodeRef.getSpouseName();
       case 'birthDate':
         return nodeRef.getBirthday();
       case 'deathDate':
@@ -67,10 +58,7 @@ export const EditableField = ({
     switch (fieldType) {
       case 'name':
         if (localValue === '') return 'Add a name';
-        return 'Name ';
-      case 'spouse':
-        if (localValue === '') return 'Add a spouse';
-        return 'Spouse: ';
+        return '';
       case 'birthDate':
         if (localValue === '') return 'Add a birthday';
         return 'Born: ';
@@ -93,11 +81,6 @@ export const EditableField = ({
     switch (fieldType) {
       case 'name':
         updateNodeName(nodeRef, '');
-        break;
-      case 'spouse':
-        if (!nodeRef.isSpouse) {
-          removeSpouse(nodeRef);
-        }
         break;
       case 'birthDate':
         updatePersonData(nodeRef, {
@@ -131,13 +114,6 @@ export const EditableField = ({
     switch (fieldType) {
       case 'name':
         updateNodeName(nodeRef, localValue);
-        break;
-      case 'spouse':
-        if (nodeRef.spouse !== null) {
-          updateNodeName(nodeRef.spouse, localValue);
-        } else {
-          addSpouse(nodeRef, localValue);
-        }
         break;
       case 'birthDate':
         updatePersonData(nodeRef, {
@@ -201,7 +177,7 @@ export const EditableField = ({
           handleSave(fieldType, nodeRef);
         }}
       >
-        Save
+        <MdSave />
       </button>
       <button
         className="editable-field-delete-button"
@@ -210,17 +186,11 @@ export const EditableField = ({
           handleDelete(fieldType, nodeRef);
         }}
       >
-        Delete
+        <MdDeleteOutline />
       </button>
     </div>
   ) : (
-    <div
-      className={'editable-label'}
-      onClick={() => {
-        if (nodeRef.isSpouse && fieldType === 'spouse') return;
-        setEditing(true);
-      }}
-    >
+    <div className={'editable-label'} onClick={() => setEditing(true)}>
       <strong>{generateLabel(fieldType)}</strong>
       {localValue}
     </div>
