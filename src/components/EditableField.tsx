@@ -58,7 +58,7 @@ export const EditableField = ({
     switch (fieldType) {
       case 'name':
         if (localValue === '') return 'Add a name';
-        return '';
+        return 'Name: ';
       case 'birthDate':
         if (localValue === '') return 'Add a birthday';
         return 'Born: ';

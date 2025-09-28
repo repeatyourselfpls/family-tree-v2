@@ -50,9 +50,23 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
         {/* Main Content */}
         <div className="sidebar-content">
           <h4>Basic Info</h4>
-          <EditableField fieldType="name" nodeRef={node} />
-          <EditableField fieldType="birthDate" nodeRef={node} />
-          <EditableField fieldType="occupation" nodeRef={node} />
+          <EditableField fieldType="name" nodeRef={node} inputType="text" />
+          <EditableField
+            fieldType="birthDate"
+            nodeRef={node}
+            inputType="date"
+          />
+          <EditableField
+            fieldType="deathDate"
+            nodeRef={node}
+            inputType="date"
+          />
+          <EditableField
+            fieldType="occupation"
+            nodeRef={node}
+            inputType="text"
+          />
+          <EditableField fieldType="bio" nodeRef={node} inputType="textarea" />
 
           <h4>Relationships</h4>
           <SpouseField node={node} />
