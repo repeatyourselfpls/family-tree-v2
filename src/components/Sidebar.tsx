@@ -71,7 +71,7 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
           <h4>Relationships</h4>
           <SpouseField node={node} />
           <DescendantsList
-            parent={node}
+            parent={node.isSpouse ? node.parent! : node}
             onNavigate={(child) =>
               setSidebarState({
                 selectedNode: { nodeRef: child },

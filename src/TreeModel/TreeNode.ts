@@ -475,12 +475,21 @@ export class TreeNode {
         else if (key === 'pic') personData.profilePicture = value;
       }
 
+      const spouseNode =
+        spouseName !== null ? new TreeNode(spouseName, [], null, {}) : null;
+
       const node = new TreeNode(
         nodeName,
         [],
-        spouseName !== null ? new TreeNode(spouseName, []) : null,
+        spouseNode,
         Object.keys(personData).length > 0 ? personData : undefined,
       );
+
+      if (spouseNode !== null) {
+        spouseNode.isSpouse = true;
+        spouseNode.parent = node;
+      }
+
       i += 1;
 
       while (i < items.length && items[i] !== '#') {
@@ -521,6 +530,7 @@ export class TreeNode {
       if (obj.spouse) {
         const spouseNode = new TreeNode(obj.spouse, []);
         spouseNode.isSpouse = true;
+        spouseNode.parent = node;
         node.spouse = spouseNode;
       }
 

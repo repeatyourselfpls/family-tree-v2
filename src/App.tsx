@@ -152,31 +152,34 @@ function App() {
         );
       }
 
-      if (n.parent && n.parent.spouse) {
+      const isChildNodeWithSingleParent = n.parent && !n.isSpouse;
+      const isChildNodeWithTwoParents =
+        n.parent && !n.isSpouse && n.parent.spouse;
+      if (isChildNodeWithTwoParents) {
         // Add bridge to descendants
         calculatedEdges.push(
           {
-            id: `${n.parent.name}Bridge-${n.name}`,
-            source: `${n.parent.name}Bridge`,
+            id: `${n.parent!.name}Bridge-${n.name}`,
+            source: `${n.parent!.name}Bridge`,
             target: n.name,
             sourceHandle: 'childrenSource', // From bottom of bridge
             type: 'smoothstep',
           },
           // edge through the bridge
           {
-            id: `${n.parent.name}BridgeSource-${n.parent.name}BridgeTarget`,
-            source: n.parent.name + 'Bridge',
-            target: n.parent.name + 'Bridge',
+            id: `${n.parent!.name}BridgeSource-${n.parent!.name}BridgeTarget`,
+            source: n.parent!.name + 'Bridge',
+            target: n.parent!.name + 'Bridge',
             sourceHandle: 'childrenSource', // From bottom bridge
             targetHandle: 'spouseTarget', // To top bridge
             type: 'straight',
           },
         );
-      } else if (n.parent) {
+      } else if (isChildNodeWithSingleParent) {
         // Add the connection from the parent
         calculatedEdges.push({
-          id: `${n.parent.name}-${n.name}`,
-          source: n.parent.name,
+          id: `${n.parent!.name}-${n.name}`,
+          source: n.parent!.name,
           target: n.name,
           type: 'smoothstep',
         });
