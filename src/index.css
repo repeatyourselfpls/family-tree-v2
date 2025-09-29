@@ -142,11 +142,6 @@ body {
   color: var(--secondary);
 }
 
-.sidebar-header-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
 
 /* Larger avatar styling for header */
 .sidebar-avatar-large .sidebar-avatar-image {
