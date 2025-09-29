@@ -22,7 +22,7 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
     sidebarState.visible && (
       <div id="sidebar">
         <div className="sidebar-header">
-          <div className="sidebar-avatar">
+          <div className="sidebar-avatar sidebar-avatar-large">
             {node.personData?.profilePicture ? (
               <img
                 src={node.personData.profilePicture}
@@ -36,14 +36,7 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
             )}
           </div>
           <div className="sidebar-header-info">
-            <h3>
-              <EditableField
-                placeholder=""
-                fieldType="name"
-                nodeRef={node}
-                inputType="text"
-              />
-            </h3>
+            <h3 className="sidebar-header-name">{node.getDisplayName()}</h3>
             {node.getAge() && <p>Age {node.getAge()}</p>}
           </div>
         </div>

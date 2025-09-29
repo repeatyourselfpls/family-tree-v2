@@ -13,6 +13,7 @@
   --text-sm: 0.875rem; /* 14px - secondary text */
   --text-base: 1rem; /* 16px - body text */
   --text-lg: 1.125rem; /* 18px - headings */
+  --text-xl: 1.25rem; /* 20px - prominent headings */
 
   --space-1: 0.25rem; /* 4px - tight */
   --space-2: 0.5rem; /* 8px - compact */
@@ -41,6 +42,7 @@
   --text-sm: 0.875rem; /* 14px - secondary text */
   --text-base: 1rem; /* 16px - body text */
   --text-lg: 1.125rem; /* 18px - headings */
+  --text-xl: 1.25rem; /* 20px - prominent headings */
 
   --space-1: 0.25rem; /* 4px - tight */
   --space-2: 0.5rem; /* 8px - compact */
@@ -144,6 +146,25 @@ body {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+/* Larger avatar styling for header */
+.sidebar-avatar-large .sidebar-avatar-image {
+  width: 90px;
+  height: 90px;
+}
+
+.sidebar-avatar-large .sidebar-avatar-initials {
+  width: 90px;
+  height: 90px;
+  font-size: 22px;
+}
+
+/* Header name styling */
+.sidebar-header-name {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  margin: 0 0 4px 0;
 }
 
 #navbar {

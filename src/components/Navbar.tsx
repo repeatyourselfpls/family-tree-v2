@@ -24,7 +24,7 @@ export const Navbar = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const reset = () => {
-    setRootNode(new TreeNode('Add your first descendant', []));
+    setRootNode(new TreeNode('Start your legacy...', []));
   };
 
   const toggleInformation = () => {
