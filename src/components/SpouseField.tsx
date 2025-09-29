@@ -56,9 +56,6 @@ export function SpouseField({ node, onNavigate }: SpouseFieldProps) {
             type="text"
             value={spouseName}
             onChange={(e) => setSpouseName(e.target.value)}
-            // onBlur={() => {
-            //   setIsEditing(false);
-            // }}
           />
           <button
             className="spouse-save-button"

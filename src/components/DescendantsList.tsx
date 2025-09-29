@@ -52,10 +52,6 @@ export function DescendantsList({ parent, onNavigate }: DescendantListProps) {
                 type="text"
                 value={editValue}
                 onChange={(e) => setEditValue(e.target.value)}
-                // onBlur={() => {
-                //   setEditingChild(null);
-                //   setEditValue('');
-                // }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') saveEdit(child);
                   if (e.key === 'Escape') {

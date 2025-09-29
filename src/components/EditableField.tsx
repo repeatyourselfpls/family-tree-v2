@@ -158,8 +158,19 @@ export const EditableField = ({
         <button
           className="editable-field-delete-button"
           onClick={() => {
-            setEditing(false);
-            handleDelete(fieldType, nodeRef);
+            if (fieldType === 'name') {
+              if (
+                confirm(
+                  `Delete ${nodeRef.getDisplayName()}'s name? \n(If you want to delete this node, delete it from ${nodeRef.getDisplayName()}'s parent or spouse.)`,
+                )
+              ) {
+                setEditing(false);
+                handleDelete(fieldType, nodeRef);
+              }
+            } else {
+              setEditing(false);
+              handleDelete(fieldType, nodeRef);
+            }
           }}
         >
           <MdDeleteOutline />
@@ -176,6 +187,7 @@ export const EditableField = ({
       {fieldType === 'bio' ? (
         <>
           <textarea
+            autoFocus
             name={fieldType}
             className="editable-field-textarea"
             value={localValue}
@@ -193,6 +205,7 @@ export const EditableField = ({
       ) : (
         <div className="editable-field-non-bio">
           <input
+            autoFocus
             name={fieldType}
             className="editable-field-input"
             type={inputType}

@@ -65,8 +65,14 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
             fieldType="occupation"
             nodeRef={node}
             inputType="text"
+            placeholder="Ninja, doctor, teacher"
           />
-          <EditableField fieldType="bio" nodeRef={node} inputType="textarea" />
+          <EditableField
+            fieldType="bio"
+            nodeRef={node}
+            inputType="textarea"
+            placeholder={`${node.getDisplayName()} was an amazing...`}
+          />
 
           <h4>Relationships</h4>
           <SpouseField
