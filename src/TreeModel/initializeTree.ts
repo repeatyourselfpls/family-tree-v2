@@ -146,6 +146,99 @@ export const richTreeExample = new TreeNode(
   },
 );
 
+export const richTreeExample2 = new TreeNode(
+  'John Smith',
+  [
+    new TreeNode(
+      'Sarah Smith',
+      [
+        new TreeNode('Emily Johnson', [], null, {
+          birthDate: '2000-06-12',
+          occupation: 'Student',
+          location: 'Seattle, WA',
+          bio: 'Aspiring artist and avid reader.',
+          profilePicture: 'https://randomuser.me/api/portraits/women/68.jpg',
+        }),
+        new TreeNode('David Johnson', [], null, {
+          birthDate: '2003-09-30',
+          occupation: 'High School Student',
+          location: 'Seattle, WA',
+          bio: 'Loves soccer and robotics.',
+          profilePicture: 'https://randomuser.me/api/portraits/men/72.jpg',
+        }),
+      ],
+      new TreeNode(
+        'Mark Johnson',
+        [
+          new TreeNode('Sophie Johnson', [], null, {
+            birthDate: '2025-01-20',
+            location: 'Seattle, WA',
+            bio: 'Baby of the family.',
+          }),
+        ],
+        null,
+        {
+          birthDate: '1975-04-17',
+          occupation: 'Architect',
+          location: 'Seattle, WA',
+          bio: 'Creative and detail-oriented.',
+          profilePicture: 'https://randomuser.me/api/portraits/men/34.jpg',
+        },
+      ),
+      {
+        birthDate: '1972-11-03',
+        occupation: 'Teacher',
+        location: 'Seattle, WA',
+        bio: 'Loves education and community work.',
+        profilePicture: 'https://randomuser.me/api/portraits/women/45.jpg',
+      },
+    ),
+    new TreeNode(
+      'Michael Smith',
+      [
+        new TreeNode('Alex Smith', [], null, {
+          birthDate: '2005-02-14',
+          occupation: 'Student',
+          location: 'San Francisco, CA',
+          bio: 'Enjoys coding and hiking.',
+          profilePicture: 'https://randomuser.me/api/portraits/men/81.jpg',
+        }),
+        new TreeNode('Olivia Smith', [], null, {
+          birthDate: '2008-07-21',
+          occupation: 'Student',
+          location: 'San Francisco, CA',
+          bio: 'Piano player and dancer.',
+          profilePicture: 'https://randomuser.me/api/portraits/women/20.jpg',
+        }),
+      ],
+      new TreeNode('Jessica Lee', [], null, {
+        birthDate: '1980-10-05',
+        occupation: 'Graphic Designer',
+        location: 'San Francisco, CA',
+        bio: 'Passionate about visual storytelling.',
+        profilePicture: 'https://randomuser.me/api/portraits/women/50.jpg',
+      }),
+      {
+        nickname: 'Mike',
+        birthDate: '1978-07-22',
+        occupation: 'Software Engineer',
+        bio: 'Passionate about technology and innovation.',
+        location: 'San Francisco, CA',
+        profilePicture: 'https://randomuser.me/api/portraits/men/33.jpg',
+      },
+    ),
+  ],
+  null,
+  {
+    birthDate: '1950-01-10',
+    deathDate: '2020-12-05',
+    occupation: 'Professor',
+    location: 'Boston, MA',
+    bio: 'Dedicated educator and loving father.',
+    profilePicture: 'https://randomuser.me/api/portraits/men/10.jpg',
+  },
+);
+
 // const root = new TreeNode('S', [
 //   new TreeNode('A', [new TreeNode('X', [])]),
 //   new TreeNode('B', [new TreeNode('U', []), new TreeNode('V', [])]),

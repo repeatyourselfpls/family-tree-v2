@@ -142,7 +142,6 @@ body {
   color: var(--secondary);
 }
 
-
 /* Larger avatar styling for header */
 .sidebar-avatar-large .sidebar-avatar-image {
   width: 90px;
@@ -266,27 +265,27 @@ body {
 .person-avatar {
   display: flex;
   justify-content: center;
-  margin-bottom: 6px;
+  margin-bottom: var(--space-3);
 }
 
 .avatar-image {
-  width: 32px;
-  height: 32px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--accent);
 }
 
 .avatar-initials {
-  width: 32px;
-  height: 32px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   background: var(--secondary);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: var(--text);
   border: 2px solid var(--accent);
 }
