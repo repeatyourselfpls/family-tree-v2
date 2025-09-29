@@ -1,5 +1,10 @@
 import { useState } from 'react';
-import { MdAdd, MdOutlineDelete, MdOutlineEdit } from 'react-icons/md';
+import {
+  MdAdd,
+  MdOutlineDelete,
+  MdOutlineEdit,
+  MdOutlineSave,
+} from 'react-icons/md';
 import { useTree } from '../context/TreeContext';
 import { TreeNode } from '../TreeModel/TreeNode';
 
@@ -26,8 +31,10 @@ export function DescendantsList({ parent, onNavigate }: DescendantListProps) {
     setEditingChild(child.name); // the id of the child, basically toggles edit mode
   }
 
-  function saveEdit(child: TreeNode, editValue: string) {
-    updateNodeName(child, editValue);
+  function saveEdit(child: TreeNode) {
+    if (editValue && editValue !== child.name) {
+      updateNodeName(child, editValue);
+    }
     setEditingChild(null);
   }
 
@@ -38,26 +45,53 @@ export function DescendantsList({ parent, onNavigate }: DescendantListProps) {
       {parent.children.map((child) => (
         <div key={child.name} className="descendant-item">
           {editingChild === child.name ? (
-            // Edit mode
-            <input
-              autoFocus
-              type="text"
-              value={editValue}
-              onChange={(e) => setEditValue(e.target.value)}
-              onBlur={() => saveEdit(child, editValue)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') saveEdit(child, editValue);
-                if (e.key === 'Escape') setEditingChild(null);
-              }}
-            />
+            // Edit mode - input with save and delete buttons
+            <>
+              <input
+                autoFocus
+                type="text"
+                value={editValue}
+                onChange={(e) => setEditValue(e.target.value)}
+                // onBlur={() => {
+                //   setEditingChild(null);
+                //   setEditValue('');
+                // }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') saveEdit(child);
+                  if (e.key === 'Escape') {
+                    setEditingChild(null);
+                    setEditValue('');
+                  }
+                }}
+              />
+              <button
+                className="descendant-save-button"
+                onClick={() => saveEdit(child)}
+              >
+                <MdOutlineSave />
+              </button>
+              <button
+                className="descendant-delete-button"
+                onClick={() => {
+                  if (confirm(`Delete ${child.name}?`))
+                    removeDescendant(parent, child);
+                }}
+              >
+                <MdOutlineDelete />
+              </button>
+            </>
           ) : (
-            // View mode
+            // View mode - name is clickable, buttons visible
             <>
               <span onClick={() => onNavigate(child)}>{child.name}</span>
-              <button onClick={() => startEdit(child)}>
+              <button
+                className="descendant-edit-button"
+                onClick={() => startEdit(child)}
+              >
                 <MdOutlineEdit />
               </button>
               <button
+                className="descendant-delete-button"
                 onClick={() => {
                   if (confirm(`Delete ${child.name}?`))
                     removeDescendant(parent, child);

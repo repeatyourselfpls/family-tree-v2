@@ -69,7 +69,15 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
           <EditableField fieldType="bio" nodeRef={node} inputType="textarea" />
 
           <h4>Relationships</h4>
-          <SpouseField node={node} />
+          <SpouseField
+            node={node}
+            onNavigate={(spouse) =>
+              setSidebarState({
+                selectedNode: { nodeRef: spouse },
+                visible: true,
+              })
+            }
+          />
           <DescendantsList
             parent={node.isSpouse ? node.parent! : node}
             onNavigate={(child) =>

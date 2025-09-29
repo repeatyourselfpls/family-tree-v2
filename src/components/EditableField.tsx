@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { MdDeleteOutline, MdSave } from 'react-icons/md';
+import { MdDeleteOutline, MdOutlineSave } from 'react-icons/md';
 import { TreeNode } from '../TreeModel/TreeNode';
 import { useTree } from '../context/TreeContext';
 
@@ -58,19 +58,19 @@ export const EditableField = ({
     switch (fieldType) {
       case 'name':
         if (localValue === '') return 'Add a name';
-        return 'Name: ';
+        return 'Name';
       case 'birthDate':
         if (localValue === '') return 'Add a birthday';
-        return 'Born: ';
+        return 'Born';
       case 'deathDate':
         if (localValue === '') return 'Add day of death';
-        return 'Died: ';
+        return 'Died';
       case 'occupation':
         if (localValue === '') return 'Add occupation';
-        return 'Occupation: ';
+        return 'Occupation';
       case 'bio':
         if (localValue === '') return 'Add bio';
-        return 'Biography: ';
+        return 'Biography';
       default:
         console.error('Default label generated for field type');
         return 'DEFAULT_LABEL';
@@ -143,11 +143,38 @@ export const EditableField = ({
     return;
   }
 
+  function renderButtons() {
+    return (
+      <>
+        <button
+          className="editable-field-save-button"
+          onClick={() => {
+            setEditing(false);
+            handleSave(fieldType, nodeRef);
+          }}
+        >
+          <MdOutlineSave />
+        </button>
+        <button
+          className="editable-field-delete-button"
+          onClick={() => {
+            setEditing(false);
+            handleDelete(fieldType, nodeRef);
+          }}
+        >
+          <MdDeleteOutline />
+        </button>
+      </>
+    );
+  }
+
   return isEditing ? (
     <div className="editable-field">
-      <label htmlFor={fieldType}>{generateLabel(fieldType)}</label>
+      <span>
+        <label htmlFor={fieldType}>{generateLabel(fieldType)}</label>
+      </span>
       {fieldType === 'bio' ? (
-        <div>
+        <>
           <textarea
             name={fieldType}
             className="editable-field-textarea"
@@ -157,42 +184,36 @@ export const EditableField = ({
               setLocalValue(e.target.value);
             }}
           ></textarea>
-        </div>
+          <div
+            className={`editable-field-buttons ${fieldType === 'bio' ? 'align-right' : ''}`}
+          >
+            {renderButtons()}
+          </div>
+        </>
       ) : (
-        <input
-          name={fieldType}
-          className="editable-field-input"
-          type={inputType}
-          value={localValue}
-          placeholder={placeholder}
-          onChange={(e) => {
-            setLocalValue(e.target.value);
-          }}
-        />
+        <div className="editable-field-non-bio">
+          <input
+            name={fieldType}
+            className="editable-field-input"
+            type={inputType}
+            value={localValue}
+            placeholder={placeholder}
+            onChange={(e) => {
+              setLocalValue(e.target.value);
+            }}
+          />
+          <div
+            className={`editable-field-buttons ${fieldType === 'bio' ? 'align-right' : ''}`}
+          >
+            {renderButtons()}
+          </div>
+        </div>
       )}
-      <button
-        className="editable-field-save-button"
-        onClick={() => {
-          setEditing(false);
-          handleSave(fieldType, nodeRef);
-        }}
-      >
-        <MdSave />
-      </button>
-      <button
-        className="editable-field-delete-button"
-        onClick={() => {
-          setEditing(false);
-          handleDelete(fieldType, nodeRef);
-        }}
-      >
-        <MdDeleteOutline />
-      </button>
     </div>
   ) : (
     <div className={'editable-label'} onClick={() => setEditing(true)}>
-      <strong>{generateLabel(fieldType)}</strong>
-      {localValue}
+      <div className="editable-label-heading">{generateLabel(fieldType)}</div>
+      <div>{localValue}</div>
     </div>
   );
 };

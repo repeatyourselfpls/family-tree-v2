@@ -8,6 +8,22 @@
   --navbar-divider: #000000;
   --navbar-shadow: rgba(0, 0, 0, 0.2);
   --error: rgb(250, 168, 182);
+
+  --text-xs: 0.75rem; /* 12px - tiny labels */
+  --text-sm: 0.875rem; /* 14px - secondary text */
+  --text-base: 1rem; /* 16px - body text */
+  --text-lg: 1.125rem; /* 18px - headings */
+
+  --space-1: 0.25rem; /* 4px - tight */
+  --space-2: 0.5rem; /* 8px - compact */
+  --space-3: 0.75rem; /* 12px - default */
+  --space-4: 1rem; /* 16px - comfortable */
+  --space-5: 1.5rem; /* 24px - spacious */
+
+  /* Neutral colors for better hierarchy */
+  --text-muted: #6b7280;
+  --border-color: #e5e7eb;
+  --bg-subtle: #f9fafb;
 }
 
 :root[data-theme='dark'] {
@@ -20,6 +36,22 @@
   --navbar-divider: #000000;
   --navbar-shadow: rgba(0, 0, 0, 0.2);
   --error: rgb(250, 168, 182);
+
+  --text-xs: 0.75rem; /* 12px - tiny labels */
+  --text-sm: 0.875rem; /* 14px - secondary text */
+  --text-base: 1rem; /* 16px - body text */
+  --text-lg: 1.125rem; /* 18px - headings */
+
+  --space-1: 0.25rem; /* 4px - tight */
+  --space-2: 0.5rem; /* 8px - compact */
+  --space-3: 0.75rem; /* 12px - default */
+  --space-4: 1rem; /* 16px - comfortable */
+  --space-5: 1.5rem; /* 24px - spacious */
+
+  /* Neutral colors for better hierarchy */
+  --text-muted: #6b7280;
+  --border-color: #e5e7eb;
+  --bg-subtle: #f9fafb;
 }
 
 html,
@@ -40,8 +72,8 @@ body {
 #sidebar {
   background-color: var(--background);
   position: relative;
-  box-shadow: 0px 0px 5px var(--navbar-shadow);
-  padding: 10px;
+  padding: var(--space-5); /* More breathing room */
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
 }
 
 .container-show-sidebar {
@@ -49,6 +81,20 @@ body {
 }
 
 /* Sidebar styling */
+
+.sidebar-content {
+  margin-top: var(--space-4);
+}
+
+.sidebar-content h4 {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: var(--space-5);
+  margin-bottom: var(--space-3);
+}
+
 .sidebar-header {
   display: flex;
   gap: 12px;
@@ -98,83 +144,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 4px;
-}
-
-.edit-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.edit-btn,
-.save-btn,
-.cancel-btn {
-  padding: 4px 8px;
-  border: 1px solid var(--secondary);
-  background: var(--background);
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-.edit-btn:hover,
-.save-btn:hover,
-.cancel-btn:hover {
-  background: var(--primary);
-}
-
-.form-group {
-  margin-bottom: 12px;
-}
-
-.form-group label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 4px;
-  font-size: 14px;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 6px;
-  border: 1px solid var(--secondary);
-  border-radius: 4px;
-  background: var(--background);
-  color: var(--text);
-  box-sizing: border-box; /* Prevents overflow */
-}
-
-.info-row {
-  margin-bottom: 8px;
-  font-size: 14px;
-}
-
-.descendant-section {
-  border-top: 1px solid var(--secondary);
-  padding-top: 12px;
-  margin-top: 16px;
-}
-
-.descendant-section h4 {
-  margin: 0 0 8px 0;
-}
-
-.descendant-section .form-group {
-  display: flex;
-  gap: 14px;
-}
-
-.descendant-section button {
-  padding: 6px 12px;
-  border: 1px solid var(--secondary);
-  background: var(--primary);
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.descendant-section button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 #navbar {
@@ -363,4 +332,451 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* View mode - the clickable label */
+.editable-label {
+  padding: var(--space-2) var(--space-1);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  gap: var(--space-2);
+}
+
+/* The label text (Name:, Born:, etc.) */
+.editable-label-heading {
+  font-weight: 500;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  text-transform: uppercase; /* Makes labels feel more like UI */
+  letter-spacing: 0.02em; /* Slightly spread for readability */
+}
+
+/* Hover state - subtle visual feedback */
+.editable-label:hover {
+  background-color: var(--bg-subtle);
+  padding-left: var(--space-3); /* Micro-animation: slides right */
+}
+
+/* Edit mode container */
+.editable-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1); /* Tighter gap since label is above */
+  padding: var(--space-2) 0;
+  animation: slideIn 0.15s ease;
+}
+
+/* Animation for edit mode appearance */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.editable-field-non-bio {
+  display: flex;
+  flex-direction: row;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.editable-field-buttons {
+  display: flex;
+  gap: var(--space-1);
+}
+
+/* Align left for regular fields, right for bio */
+.editable-field-buttons.align-right {
+  justify-content: flex-end;
+}
+
+/* Label in edit mode */
+.editable-field label {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: var(--space-1); /* Space between label and input */
+}
+
+/* Input fields styling */
+.editable-field-input,
+.editable-field-textarea {
+  padding: var(--space-2);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: var(--text-sm);
+  background: white;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Focus state - blue glow effect */
+.editable-field-input:focus,
+.editable-field-textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(73, 158, 206, 0.1);
+  background: white;
+}
+
+/* Textarea specific */
+.editable-field-textarea {
+  min-height: 80px;
+  resize: vertical; /* Allow vertical expansion only */
+  line-height: 1.4;
+}
+
+/* Icon buttons (save/delete) */
+.editable-field-save-button,
+.editable-field-delete-button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  font-size: 16px; /* Icon size */
+  color: var(--text-muted);
+}
+
+/* Save button hover - positive action */
+.editable-field-save-button:hover {
+  background: #dcfce7; /* Light green */
+  color: #16a34a; /* Green */
+  transform: scale(1.1);
+}
+
+/* Delete button hover - destructive action */
+.editable-field-delete-button:hover {
+  background: #fee2e2; /* Light red */
+  color: #dc2626; /* Red */
+  transform: scale(1.1);
+}
+
+/* Active/click state for buttons */
+.editable-field-save-button:active,
+.editable-field-delete-button:active {
+  transform: scale(0.95);
+}
+
+/* DescendantList Styles */
+
+.descendant-item {
+  display: flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-1); /* Match editable-label */
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  gap: var(--space-2);
+}
+
+.descendant-item span {
+  flex: 1;
+  cursor: pointer;
+  font-size: var(--text-sm);
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--border-color); /* Subtle underline */
+  text-underline-offset: 2px; /* Space between text and underline */
+  transition: all 0.15s ease;
+}
+
+.descendant-item span:hover {
+  color: var(--primary);
+  text-decoration-color: var(--primary); /* Underline matches text on hover */
+}
+
+.descendant-item:hover {
+  background-color: var(--bg-subtle);
+  padding-left: var(--space-3); /* Same indent as editable-label */
+}
+
+.descendant-save-button,
+.descendant-edit-button,
+.descendant-delete-button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+.descendant-edit-button,
+.descendant-delete-button {
+  opacity: 0.4; /* Subtle by default */
+  transition: opacity 0.15s ease;
+}
+
+.descendant-item:hover .descendant-edit-button,
+.descendant-item:hover .descendant-delete-button {
+  opacity: 1; /* Full opacity on row hover */
+}
+
+.descendant-save-button:hover,
+.descendant-edit-button:hover {
+  background: #dcfce7;
+  color: #16a34a;
+  transform: scale(1.1);
+}
+
+.descendant-delete-button:hover {
+  background: #fee2e2;
+  color: #dc2626;
+  transform: scale(1.1);
+}
+
+.descendant-save-button:active,
+.descendant-edit-button:active,
+.descendant-delete-button:active {
+  transform: scale(0.95);
+}
+
+.descendant-item input {
+  flex: 1;
+  padding: var(--space-2);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: var(--text-sm);
+  background: white;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.descendant-item input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(73, 158, 206, 0.1);
+}
+
+.add-descendant {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-color);
+}
+
+.add-descendant input {
+  flex: 1;
+  padding: var(--space-2);
+  border: 1px dashed var(--border-color);
+  border-radius: 4px;
+  font-size: var(--text-sm);
+  background: transparent;
+  transition: all 0.2s ease;
+}
+
+.add-descendant input:focus {
+  outline: none;
+  border: 1px solid var(--primary);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(73, 158, 206, 0.1);
+}
+
+.add-descendant button {
+  width: 32px; /* Match other buttons */
+  height: 32px;
+  border: none;
+  background: var(--primary);
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.15s ease;
+}
+
+.add-descendant button:hover {
+  background: var(--accent);
+  transform: scale(1.05);
+}
+
+.add-descendant button:active {
+  transform: scale(0.95);
+}
+
+.descendant-item input {
+  animation: slideIn 0.15s ease;
+}
+
+.spouse-field {
+  display: flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-1);
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  gap: var(--space-2);
+}
+
+.spouse-field:hover {
+  background-color: var(--bg-subtle);
+  padding-left: var(--space-3); /* Same indent animation */
+}
+
+/* The spouse name span (clickable for navigation) */
+
+.spouse-field span {
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  color: var(--text);
+  transition: all 0.15s ease;
+}
+
+/* Spouse label styling (already defined at line 621-628) */
+#spouse-label {
+  font-weight: 500;
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+
+  flex: 0;
+}
+
+#spouse-name {
+  text-decoration: underline;
+  text-decoration-color: var(--border-color); /* Subtle underline */
+  text-underline-offset: 2px;
+}
+
+#spouse-name:hover {
+  color: var(--primary);
+  text-decoration-color: var(--primary);
+}
+
+/* Edit mode input */
+.spouse-field input {
+  flex: 1;
+  padding: var(--space-2);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: var(--text-sm);
+  background: white;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  animation: slideIn 0.15s ease;
+}
+
+.spouse-field input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(73, 158, 206, 0.1);
+}
+
+/* Spouse buttons matching descendant buttons */
+.spouse-save-button,
+.spouse-edit-button,
+.spouse-field button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+/* Edit button subtle by default */
+.spouse-edit-button,
+.spouse-field button:last-child {
+  /* Delete button */
+  opacity: 0.4;
+}
+
+/* Full opacity on row hover */
+.spouse-field:hover .spouse-edit-button,
+.spouse-field:hover button:last-child {
+  opacity: 1;
+}
+
+/* Save/Edit button hover */
+.spouse-save-button:hover,
+.spouse-edit-button:hover {
+  background: #dcfce7;
+  color: #16a34a;
+  transform: scale(1.1);
+}
+
+/* Delete button hover */
+.spouse-field button:last-child:hover {
+  background: #fee2e2;
+  color: #dc2626;
+  transform: scale(1.1);
+}
+
+/* Active states */
+.spouse-save-button:active,
+.spouse-edit-button:active,
+.spouse-field button:active {
+  transform: scale(0.95);
+}
+
+/* Add spouse button */
+.add-spouse-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border: 1px dashed var(--border-color);
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  transition: all 0.15s ease;
+  margin: var(--space-2) 0;
+}
+
+.add-spouse-button:hover {
+  border-color: var(--primary);
+  background: var(--bg-subtle);
+  color: var(--primary);
+}
+
+.add-spouse-button:active {
+  transform: scale(0.98);
+}
+
+/* Add text after icon */
+.add-spouse-button::after {
+  content: 'Add spouse';
 }
