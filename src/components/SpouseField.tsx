@@ -15,7 +15,7 @@ type SpouseFieldProps = {
 
 export function SpouseField({ node, onNavigate }: SpouseFieldProps) {
   const { addSpouse, removeSpouse, updateNodeName } = useTree();
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setEditing] = useState(false);
   const [spouseName, setSpouseName] = useState('');
 
   if (node.isSpouse)
@@ -56,12 +56,21 @@ export function SpouseField({ node, onNavigate }: SpouseFieldProps) {
             type="text"
             value={spouseName}
             onChange={(e) => setSpouseName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                setEditing(false);
+                updateNodeName(node.spouse!, spouseName);
+              }
+              if (e.key === 'Escape') {
+                setEditing(false);
+              }
+            }}
           />
           <button
             className="spouse-save-button"
             onClick={() => {
               updateNodeName(node.spouse!, spouseName);
-              setIsEditing(false);
+              setEditing(false);
             }}
           >
             <MdOutlineSave />
@@ -81,7 +90,7 @@ export function SpouseField({ node, onNavigate }: SpouseFieldProps) {
             className="spouse-edit-button"
             onClick={() => {
               setSpouseName(node.spouse!.name);
-              setIsEditing(true);
+              setEditing(true);
             }}
           >
             <MdOutlineEdit />

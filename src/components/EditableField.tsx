@@ -195,10 +195,17 @@ export const EditableField = ({
             onChange={(e) => {
               setLocalValue(e.target.value);
             }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                setEditing(false);
+                handleSave(fieldType, nodeRef);
+              }
+              if (e.key === 'Escape') {
+                setEditing(false);
+              }
+            }}
           ></textarea>
-          <div
-            className={`editable-field-buttons ${fieldType === 'bio' ? 'align-right' : ''}`}
-          >
+          <div className={`editable-field-buttons align-right`}>
             {renderButtons()}
           </div>
         </>
@@ -214,12 +221,17 @@ export const EditableField = ({
             onChange={(e) => {
               setLocalValue(e.target.value);
             }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                setEditing(false);
+                handleSave(fieldType, nodeRef);
+              }
+              if (e.key === 'Escape') {
+                setEditing(false);
+              }
+            }}
           />
-          <div
-            className={`editable-field-buttons ${fieldType === 'bio' ? 'align-right' : ''}`}
-          >
-            {renderButtons()}
-          </div>
+          <div className={`editable-field-buttons`}>{renderButtons()}</div>
         </div>
       )}
     </div>
