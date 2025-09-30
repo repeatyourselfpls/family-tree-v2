@@ -1,9 +1,9 @@
 import { MdClose } from 'react-icons/md';
-import Slideshow from './Slideshow';
+import navbarImage from '../assets/navbar.png';
 import nodeImage from '../assets/node.png';
 import spouseImage from '../assets/spouse.png';
 import themeImage from '../assets/theme.png';
-import navbarImage from '../assets/navbar.png';
+import Slideshow from './Slideshow';
 
 export type WelcomeModalProps = {
   visible: boolean;
