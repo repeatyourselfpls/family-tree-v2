@@ -1,5 +1,9 @@
 import { MdClose } from 'react-icons/md';
 import Slideshow from './Slideshow';
+import nodeImage from '../assets/node.png';
+import spouseImage from '../assets/spouse.png';
+import themeImage from '../assets/theme.png';
+import navbarImage from '../assets/navbar.png';
 
 export type WelcomeModalProps = {
   visible: boolean;
@@ -17,19 +21,19 @@ const WelcomeModal = ({ visible, onClose }: WelcomeModalProps) => {
 
   const slideshowImages = [
     {
-      src: '/api/placeholder/400/300',
+      src: nodeImage,
       caption: 'Click on any person to view and edit their details',
     },
     {
-      src: '/api/placeholder/400/300',
+      src: spouseImage,
       caption: 'Add spouses and children to build your family tree',
     },
     {
-      src: '/api/placeholder/400/300',
-      caption: 'Save your tree to a file or load from existing data',
+      src: navbarImage,
+      caption: 'Save and share your tree with your family',
     },
     {
-      src: '/api/placeholder/400/300',
+      src: themeImage,
       caption: 'Toggle between light and dark themes',
     },
   ];
@@ -93,9 +97,9 @@ const WelcomeModal = ({ visible, onClose }: WelcomeModalProps) => {
               <button className="welcome-modal-cta" onClick={onClose}>
                 Start Building Your Family Tree
               </button>
-              <a 
-                href="https://suryacodes.com" 
-                target="_blank" 
+              <a
+                href="https://suryacodes.com"
+                target="_blank"
                 rel="noopener noreferrer"
                 className="welcome-modal-inline-credit"
               >
