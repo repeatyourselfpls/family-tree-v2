@@ -26,6 +26,10 @@ export type TreeContextType = {
   theme: string;
   toggleTheme: () => void;
 
+  welcomeModalVisible: boolean;
+  showWelcomeModal: () => void;
+  hideWelcomeModal: () => void;
+
   cfg: AppConfig;
 };
 

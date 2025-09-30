@@ -93,6 +93,16 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
           </div>
           <div>MOD: {node.mod}</div>
         </div> */}
+        <div className="sidebar-footer">
+          <a 
+            href="https://suryacodes.com" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="sidebar-credit"
+          >
+            made by surya
+          </a>
+        </div>
       </div>
     )
   );

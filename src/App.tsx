@@ -18,6 +18,7 @@ import Sidebar, { SidebarState } from './components/Sidebar';
 import SpouseNode from './components/SpouseNode';
 import Toast from './components/Toast';
 import { TreeNodeData } from './components/types';
+import WelcomeModal from './components/WelcomeModal';
 import { TreeContext, TreeContextType } from './context/TreeContext';
 import { useToastManager } from './hooks/useToastManager';
 import {
@@ -56,6 +57,8 @@ function App() {
     selectedNode: null,
   });
 
+  const [welcomeModalVisible, setWelcomeModalVisible] = useState(false);
+
   const { toastState, showToast } = useToastManager(4000);
 
   // on component mount
@@ -73,6 +76,12 @@ function App() {
     // load localstorage tree
     const jsonSerialization = localStorage.getItem('family-tree');
     if (jsonSerialization) setRootNode(deserializeTreeJSON(jsonSerialization));
+
+    // check if user has seen welcome modal
+    const hasSeenWelcome = localStorage.getItem('family-tree-welcome-seen');
+    if (!hasSeenWelcome) {
+      setWelcomeModalVisible(true);
+    }
   }, [reactFlowInstance]);
 
   // Theme configuration
@@ -258,6 +267,15 @@ function App() {
     return TreeNode.deserializeTreeJSON(serialization);
   };
 
+  const showWelcomeModal = () => {
+    setWelcomeModalVisible(true);
+  };
+
+  const hideWelcomeModal = () => {
+    setWelcomeModalVisible(false);
+    localStorage.setItem('family-tree-welcome-seen', 'true');
+  };
+
   // need to figure out what to do with such a large context object
   // is it possible to put state initialized in a sub component into a global context
   // object without initializing state in a global component / place
@@ -280,6 +298,9 @@ function App() {
 
     theme,
     toggleTheme,
+    welcomeModalVisible,
+    showWelcomeModal,
+    hideWelcomeModal,
     cfg: { mode: 'prd' },
   };
 
@@ -356,6 +377,10 @@ function App() {
 
         <Sidebar sidebarState={sidebarState} />
         <Navbar />
+        <WelcomeModal
+          visible={welcomeModalVisible}
+          onClose={hideWelcomeModal}
+        />
 
         <Toast toastState={toastState} />
       </div>

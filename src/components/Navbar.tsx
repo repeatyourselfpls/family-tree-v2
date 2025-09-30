@@ -19,6 +19,7 @@ export const Navbar = () => {
     rootNode,
     toggleTheme,
     theme,
+    showWelcomeModal,
   } = useTree();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -28,7 +29,7 @@ export const Navbar = () => {
   };
 
   const toggleInformation = () => {
-    //TODO: Pop a modal that explains how to use this app
+    showWelcomeModal();
   };
 
   const uploadFile = () => {
