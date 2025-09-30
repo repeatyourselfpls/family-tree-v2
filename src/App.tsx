@@ -26,7 +26,7 @@ import {
   MAX_NODE_HEIGHT,
   MAX_NODE_WIDTH,
   retrieveNodes,
-  richTreeExample,
+  richTreeExample2,
 } from './TreeModel/initializeTree';
 import { PersonData, TreeNode } from './TreeModel/TreeNode';
 
@@ -43,7 +43,7 @@ export type AppConfig = {
 function App() {
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance | null>(null);
-  const [rootNode, setRootNode] = useState<TreeNode>(richTreeExample);
+  const [rootNode, setRootNode] = useState<TreeNode>(richTreeExample2);
   const [treeVersion, setTreeVersion] = useState(0);
 
   const [theme, setTheme] = useState('light');
