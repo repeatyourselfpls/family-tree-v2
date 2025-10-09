@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   MdDeleteOutline,
+  MdOutlineAdd,
   MdOutlineEdit,
   MdOutlineSave,
 } from 'react-icons/md';
@@ -49,7 +50,7 @@ export function SpouseField({ node, onNavigate }: SpouseFieldProps) {
             setIsAdding(true);
           }}
         >
-          <MdOutlineEdit />
+          <MdOutlineAdd />
         </button>
       </div>
     );

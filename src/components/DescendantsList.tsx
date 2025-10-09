@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
-import { MdOutlineDelete, MdOutlineEdit, MdOutlineSave } from 'react-icons/md';
+import {
+  MdOutlineAdd,
+  MdOutlineDelete,
+  MdOutlineEdit,
+  MdOutlineSave,
+} from 'react-icons/md';
 import { useTree } from '../context/TreeContext';
 import { TreeNode } from '../TreeModel/TreeNode';
 
@@ -137,7 +142,7 @@ export function DescendantsList({ parent, onNavigate }: DescendantListProps) {
               setIsAdding(true);
             }}
           >
-            <MdOutlineEdit />
+            <MdOutlineAdd />
           </button>
         </div>
       )}

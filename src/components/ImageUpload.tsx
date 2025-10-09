@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   MdDeleteOutline,
+  MdOutlineAdd,
   MdOutlineEdit,
   MdOutlineSave,
   MdUploadFile,
@@ -114,7 +115,7 @@ export function ImageUpload({
             setEditing(true);
           }}
         >
-          <MdOutlineEdit />
+          <MdOutlineAdd />
         </button>
       </div>
     );
