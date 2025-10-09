@@ -14,6 +14,7 @@ export class TreeNode {
   static TREE_DISTANCE = 0;
   static COUPLE_DISTANCE = 1; // should be <= (node_size + sibling_distance) for aesthetics
 
+  uuid: string = '';
   name = '';
   personData: PersonData = {};
   children: TreeNode[] = [];
@@ -33,8 +34,10 @@ export class TreeNode {
     children: TreeNode[] = [],
     spouse: TreeNode | null = null,
     personData?: PersonData,
+    uuid?: string,
   ) {
     this.name = name;
+    this.uuid = uuid || crypto.randomUUID();
     this.personData = personData || {};
     this.children = children;
     this.spouse = spouse;
@@ -411,8 +414,12 @@ export class TreeNode {
       if (n === null) return '';
 
       let s = '';
-      // Include name and spouse
-      s += n.name + (n.spouse !== null ? ':' + n.spouse.name : '');
+      // Include name, uuid and spouse
+      s +=
+        n.name +
+        ':' +
+        n.uuid +
+        (n.spouse !== null ? ':' + n.spouse.name + ':' + n.spouse.uuid : '');
 
       // Add person data fields with | separator
       const dataFields: string[] = [];
@@ -459,7 +466,9 @@ export class TreeNode {
 
       const splitted = nameSpousePart.split(':');
       const nodeName = splitted[0];
-      const spouseName = splitted.length > 1 ? splitted[1] : null;
+      const nodeUUID = splitted[1];
+      const spouseName = splitted.length > 2 ? splitted[2] : null;
+      const spouseUUID = splitted.length > 2 ? splitted[3] : null;
 
       // Parse person data fields
       const personData: PersonData = {};
@@ -476,13 +485,16 @@ export class TreeNode {
       }
 
       const spouseNode =
-        spouseName !== null ? new TreeNode(spouseName, [], null, {}) : null;
+        spouseName !== null
+          ? new TreeNode(spouseName, [], null, {}, spouseUUID!)
+          : null;
 
       const node = new TreeNode(
         nodeName,
         [],
         spouseNode,
         Object.keys(personData).length > 0 ? personData : undefined,
+        nodeUUID,
       );
 
       if (spouseNode !== null) {
@@ -506,14 +518,18 @@ export class TreeNode {
   static serializeTreeJSON(node: TreeNode): string {
     function convert(n: TreeNode): {
       name: string;
+      uuid: string;
       personData: PersonData;
       spouse: string | null;
+      spouseUUID: string | null;
       children: ReturnType<typeof convert>[];
     } {
       return {
         name: n.name,
+        uuid: n.uuid,
         personData: n.personData,
         spouse: n?.spouse?.name || null,
+        spouseUUID: n?.spouse?.uuid || null,
         children: n?.children.map(convert) || [],
       };
     }
@@ -525,10 +541,16 @@ export class TreeNode {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function rebuild(obj: any): TreeNode {
-      const node = new TreeNode(obj.name, [], null, obj.personData);
+      const node = new TreeNode(obj.name, [], null, obj.personData, obj.uuid);
 
       if (obj.spouse) {
-        const spouseNode = new TreeNode(obj.spouse, []);
+        const spouseNode = new TreeNode(
+          obj.spouse,
+          [],
+          null,
+          {},
+          obj.spouseUUID,
+        );
         spouseNode.isSpouse = true;
         spouseNode.parent = node;
         node.spouse = spouseNode;

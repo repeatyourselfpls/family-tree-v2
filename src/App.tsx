@@ -111,7 +111,7 @@ function App() {
       };
 
       calculatedNodes.push({
-        id: n.name,
+        id: n.uuid,
         position: { x: n.positionedX, y: n.positionedY },
         data: nodeData,
         type: n.isSpouse ? 'spouseNode' : 'mainNode',
@@ -121,7 +121,7 @@ function App() {
         // Add the bridge node positioned in the gap between spouses
         // Bridge starts at midpoint and extends downward
         calculatedNodes.push({
-          id: n.name + 'Bridge',
+          id: n.uuid + 'Bridge',
           position: {
             x: n.positionedX + MAX_NODE_WIDTH + GAP_X / 2, // Start at right edge of main node
             y: n.positionedY + MAX_NODE_HEIGHT / 2 + BRIDGE_OFFSET, // Start at vertical midpoint of nodes
@@ -143,17 +143,17 @@ function App() {
         // Add the spouses to bridge (T-junction)
         calculatedEdges.push(
           {
-            id: `${n.name}-${n.name}Bridge`,
-            source: `${n.name}`,
-            target: n.name + 'Bridge',
+            id: `${n.uuid}-${n.uuid}Bridge`,
+            source: `${n.uuid}`,
+            target: n.uuid + 'Bridge',
             sourceHandle: 'right', // From right side of main
             targetHandle: 'spouseTarget', // To top of bridge
             type: 'straight',
           },
           {
-            id: `${n.spouse.name}-${n.name}Bridge`,
-            source: `${n.spouse.name}`,
-            target: n.name + 'Bridge',
+            id: `${n.spouse.uuid}-${n.uuid}Bridge`,
+            source: `${n.spouse.uuid}`,
+            target: n.uuid + 'Bridge',
             sourceHandle: 'left', // From left side of spouse
             targetHandle: 'spouseTarget', // To same top point of bridge
             type: 'straight',
@@ -168,17 +168,17 @@ function App() {
         // Add bridge to descendants
         calculatedEdges.push(
           {
-            id: `${n.parent!.name}Bridge-${n.name}`,
-            source: `${n.parent!.name}Bridge`,
-            target: n.name,
+            id: `${n.parent!.uuid}Bridge-${n.uuid}`,
+            source: `${n.parent!.uuid}Bridge`,
+            target: n.uuid,
             sourceHandle: 'childrenSource', // From bottom of bridge
             type: 'smoothstep',
           },
-          // edge through the bridge
+          // edge through the bridge, so that it's visible
           {
-            id: `${n.parent!.name}BridgeSource-${n.parent!.name}BridgeTarget`,
-            source: n.parent!.name + 'Bridge',
-            target: n.parent!.name + 'Bridge',
+            id: `${n.parent!.uuid}BridgeSource-self${n.uuid}`,
+            source: n.parent!.uuid + 'Bridge',
+            target: n.parent!.uuid + 'Bridge',
             sourceHandle: 'childrenSource', // From bottom bridge
             targetHandle: 'spouseTarget', // To top bridge
             type: 'straight',
@@ -187,9 +187,9 @@ function App() {
       } else if (isChildNodeWithSingleParent) {
         // Add the connection from the parent
         calculatedEdges.push({
-          id: `${n.parent!.name}-${n.name}`,
-          source: n.parent!.name,
-          target: n.name,
+          id: `${n.parent!.uuid}-${n.uuid}`,
+          source: n.parent!.uuid,
+          target: n.uuid,
           type: 'smoothstep',
         });
       }
@@ -314,7 +314,7 @@ function App() {
           const mainNode = updatedNodes.find((n) => n.id === mainNodeId);
           const spouseNode = updatedNodes.find(
             (n) =>
-              n.id === (mainNode?.data as TreeNodeData).nodeRef.spouse?.name,
+              n.id === (mainNode?.data as TreeNodeData).nodeRef.spouse?.uuid,
           );
 
           if (mainNode && spouseNode) {

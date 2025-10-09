@@ -28,7 +28,7 @@ export function DescendantsList({ parent, onNavigate }: DescendantListProps) {
 
   function startEdit(child: TreeNode) {
     setEditValue(child.name); // a temp value of the editing node
-    setEditingChild(child.name); // the id of the child, basically toggles edit mode
+    setEditingChild(child.uuid); // the id of the child, basically toggles edit mode
   }
 
   function saveEdit(child: TreeNode) {
@@ -43,8 +43,8 @@ export function DescendantsList({ parent, onNavigate }: DescendantListProps) {
       <h4>Children ({parent.children.length})</h4>
 
       {parent.children.map((child) => (
-        <div key={child.name} className="descendant-item">
-          {editingChild === child.name ? (
+        <div key={child.uuid} className="descendant-item">
+          {editingChild === child.uuid ? (
             // Edit mode - input with save and delete buttons
             <>
               <input

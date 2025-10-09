@@ -89,7 +89,7 @@ export default function MainNode(props: NodeProps<MainNodeType>) {
             id="right"
           />
         </>
-      ) : (
+      ) : props.data.nodeRef.children.length > 0 ? (
         <>
           <Handle
             type="source"
@@ -97,7 +97,7 @@ export default function MainNode(props: NodeProps<MainNodeType>) {
             isConnectable={props.isConnectable}
           />
         </>
-      )}
+      ) : null}
     </div>
   );
 }

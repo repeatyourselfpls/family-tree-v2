@@ -31,10 +31,12 @@ export const EditableField = ({
     getCurrentValue(fieldType, nodeRef),
   );
 
+  const currentValue = getCurrentValue(fieldType, nodeRef);
+
   useEffect(() => {
-    setLocalValue(getCurrentValue(fieldType, nodeRef));
+    setLocalValue(currentValue);
     setEditing(false);
-  }, [nodeRef, nodeRef.name, nodeRef.spouse, nodeRef.personData, fieldType]);
+  }, [currentValue, fieldType]);
 
   function getCurrentValue(fieldType: FieldType, nodeRef: TreeNode) {
     switch (fieldType) {
