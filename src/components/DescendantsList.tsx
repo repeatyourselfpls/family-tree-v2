@@ -1,10 +1,5 @@
-import { useState } from 'react';
-import {
-  MdAdd,
-  MdOutlineDelete,
-  MdOutlineEdit,
-  MdOutlineSave,
-} from 'react-icons/md';
+import { useEffect, useState } from 'react';
+import { MdOutlineDelete, MdOutlineEdit, MdOutlineSave } from 'react-icons/md';
 import { useTree } from '../context/TreeContext';
 import { TreeNode } from '../TreeModel/TreeNode';
 
@@ -15,15 +10,25 @@ type DescendantListProps = {
 
 export function DescendantsList({ parent, onNavigate }: DescendantListProps) {
   const { addDescendant, removeDescendant, updateNodeName } = useTree();
+  const [isAdding, setIsAdding] = useState(false);
   const [newChildName, setNewChildName] = useState('');
   const [editingChild, setEditingChild] = useState<string | null>(null);
   const [editValue, setEditValue] = useState('');
 
+  // Reset add/edit state when parent changes
+  useEffect(() => {
+    setIsAdding(false);
+    setNewChildName('');
+    setEditingChild(null);
+    setEditValue('');
+  }, [parent.uuid]);
+
   function handleAddChild() {
-    if (newChildName) {
+    if (newChildName.trim()) {
       addDescendant(parent, newChildName);
-      setNewChildName('');
     }
+    setNewChildName('');
+    setIsAdding(false);
   }
 
   function startEdit(child: TreeNode) {
@@ -101,17 +106,41 @@ export function DescendantsList({ parent, onNavigate }: DescendantListProps) {
       ))}
 
       {/* Add new child */}
-      <div className="add-descendant">
-        <input
-          value={newChildName}
-          onChange={(e) => setNewChildName(e.target.value)}
-          placeholder="Add child..."
-          onKeyDown={(e) => e.key === 'Enter' && handleAddChild()}
-        />
-        <button onClick={handleAddChild}>
-          <MdAdd />
-        </button>
-      </div>
+      {isAdding ? (
+        <div className="add-descendant">
+          <input
+            autoFocus
+            value={newChildName}
+            onChange={(e) => setNewChildName(e.target.value)}
+            placeholder="Enter child name"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleAddChild();
+              }
+              if (e.key === 'Escape') {
+                setIsAdding(false);
+                setNewChildName('');
+              }
+            }}
+          />
+          <button onClick={handleAddChild}>
+            <MdOutlineSave />
+          </button>
+        </div>
+      ) : (
+        <div className="add-descendant-empty">
+          <span>Add child</span>
+          <button
+            className="descendant-edit-button"
+            onClick={() => {
+              setNewChildName('');
+              setIsAdding(true);
+            }}
+          >
+            <MdOutlineEdit />
+          </button>
+        </div>
+      )}
     </div>
   );
 }

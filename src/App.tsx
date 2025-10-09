@@ -216,16 +216,22 @@ function App() {
   }, [rootNode, reactFlowInstance]);
 
   const addDescendant = (parentNode: TreeNode, descendantName: string) => {
+    // Ensure we're adding to the main node, not the spouse
+    const actualParent = parentNode.isSpouse ? parentNode.parent! : parentNode;
+
     const newChild = new TreeNode(descendantName, []);
-    parentNode.children.push(newChild);
+    actualParent.children.push(newChild);
 
     setTreeVersion((prev) => prev + 1);
   };
 
   const removeDescendant = (parentNode: TreeNode, childToRemove: TreeNode) => {
-    const i = parentNode.children.indexOf(childToRemove);
+    // Ensure we're removing from the main node, not the spouse
+    const actualParent = parentNode.isSpouse ? parentNode.parent! : parentNode;
+
+    const i = actualParent.children.indexOf(childToRemove);
     if (i > -1) {
-      parentNode.children.splice(i, 1);
+      actualParent.children.splice(i, 1);
     }
 
     setTreeVersion((prev) => prev + 1);

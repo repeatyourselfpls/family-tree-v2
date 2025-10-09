@@ -1,6 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  MdAdd,
   MdDeleteOutline,
   MdOutlineEdit,
   MdOutlineSave,
@@ -16,7 +15,15 @@ type SpouseFieldProps = {
 export function SpouseField({ node, onNavigate }: SpouseFieldProps) {
   const { addSpouse, removeSpouse, updateNodeName } = useTree();
   const [isEditing, setEditing] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
   const [spouseName, setSpouseName] = useState('');
+
+  // Reset add/edit state when node changes
+  useEffect(() => {
+    setIsAdding(false);
+    setEditing(false);
+    setSpouseName('');
+  }, [node.uuid]);
 
   if (node.isSpouse)
     return (
@@ -30,80 +37,124 @@ export function SpouseField({ node, onNavigate }: SpouseFieldProps) {
       </>
     );
 
-  if (!node.spouse) {
+  // Empty state - no spouse yet
+  if (!node.spouse && !isAdding) {
     return (
-      <button
-        className="add-spouse-button"
-        onClick={() => {
-          const name = prompt(
-            'Enter a spouse name (only one spouse supported)',
-          );
-          if (name) addSpouse(node, name);
-        }}
-      >
-        <MdAdd />
-      </button>
+      <div className="spouse-field-empty">
+        <span>Add spouse</span>
+        <button
+          className="spouse-edit-button"
+          onClick={() => {
+            setSpouseName('');
+            setIsAdding(true);
+          }}
+        >
+          <MdOutlineEdit />
+        </button>
+      </div>
     );
   }
 
-  return (
-    <div className="spouse-field">
-      {isEditing ? (
-        <>
-          {/* Edit mode */}
-          <input
-            autoFocus
-            type="text"
-            value={spouseName}
-            onChange={(e) => setSpouseName(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                setEditing(false);
+  // Adding new spouse
+  if (!node.spouse && isAdding) {
+    return (
+      <div className="spouse-field">
+        <input
+          autoFocus
+          type="text"
+          value={spouseName}
+          onChange={(e) => setSpouseName(e.target.value)}
+          placeholder="Enter spouse name"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              if (spouseName.trim()) {
+                addSpouse(node, spouseName);
+              }
+              setIsAdding(false);
+            }
+            if (e.key === 'Escape') {
+              setIsAdding(false);
+            }
+          }}
+        />
+        <button
+          className="spouse-save-button"
+          onClick={() => {
+            if (spouseName.trim()) {
+              addSpouse(node, spouseName);
+            }
+            setIsAdding(false);
+          }}
+        >
+          <MdOutlineSave />
+        </button>
+      </div>
+    );
+  }
+
+  // Has spouse - view/edit mode
+  if (node.spouse) {
+    return (
+      <div className="spouse-field">
+        {isEditing ? (
+          <>
+            {/* Edit mode */}
+            <input
+              autoFocus
+              type="text"
+              value={spouseName}
+              onChange={(e) => setSpouseName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  setEditing(false);
+                  updateNodeName(node.spouse!, spouseName);
+                }
+                if (e.key === 'Escape') {
+                  setEditing(false);
+                }
+              }}
+            />
+            <button
+              className="spouse-save-button"
+              onClick={() => {
                 updateNodeName(node.spouse!, spouseName);
-              }
-              if (e.key === 'Escape') {
                 setEditing(false);
-              }
-            }}
-          />
-          <button
-            className="spouse-save-button"
-            onClick={() => {
-              updateNodeName(node.spouse!, spouseName);
-              setEditing(false);
-            }}
-          >
-            <MdOutlineSave />
-          </button>
-          <button onClick={() => removeSpouse(node)}>
-            <MdDeleteOutline />
-          </button>
-        </>
-      ) : (
-        <>
-          {/* View mode */}
-          <span onClick={() => onNavigate(node.spouse!)}>
-            <span id="spouse-label">Spouse</span>
-            <span id="spouse-name">{node.spouse.name}</span>
-          </span>
-          <button
-            className="spouse-edit-button"
-            onClick={() => {
-              setSpouseName(node.spouse!.name);
-              setEditing(true);
-            }}
-          >
-            <MdOutlineEdit />
-          </button>
-          <button
-            onClick={() => {
-              if (confirm(`Delete ${node.spouse?.name}?`)) removeSpouse(node);
-            }}
-          >
-            <MdDeleteOutline />
-          </button>
-        </>
-      )}
-    </div>
-  );
+              }}
+            >
+              <MdOutlineSave />
+            </button>
+            <button onClick={() => removeSpouse(node)}>
+              <MdDeleteOutline />
+            </button>
+          </>
+        ) : (
+          <>
+            {/* View mode */}
+            <span onClick={() => onNavigate(node.spouse!)}>
+              <span id="spouse-label">Spouse</span>
+              <span id="spouse-name">{node.spouse.name}</span>
+            </span>
+            <button
+              className="spouse-edit-button"
+              onClick={() => {
+                setSpouseName(node.spouse!.name);
+                setEditing(true);
+              }}
+            >
+              <MdOutlineEdit />
+            </button>
+            <button
+              onClick={() => {
+                if (confirm(`Delete ${node.spouse?.name}?`)) removeSpouse(node);
+              }}
+            >
+              <MdDeleteOutline />
+            </button>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  return null;
 }

@@ -19,6 +19,9 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
   const node = sidebarState.selectedNode?.nodeRef;
   if (!node) return null;
 
+  // Determine the correct parent for children
+  const childrenParent = node.isSpouse ? node.parent! : node;
+
   return (
     sidebarState.visible && (
       <div id="sidebar">
@@ -79,7 +82,7 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
             }
           />
           <DescendantsList
-            parent={node.isSpouse ? node.parent! : node}
+            parent={childrenParent}
             onNavigate={(child) =>
               setSidebarState({
                 selectedNode: { nodeRef: child },
