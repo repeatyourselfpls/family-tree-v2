@@ -1,6 +1,7 @@
 import { useTree } from '../context/TreeContext';
 import { DescendantsList } from './DescendantsList';
 import { EditableField } from './EditableField';
+import { ImageUpload } from './ImageUpload';
 import { SpouseField } from './SpouseField';
 import { TreeNodeData } from './types';
 
@@ -14,7 +15,7 @@ export type SidebarProps = {
 };
 
 export default function Sidebar({ sidebarState }: SidebarProps) {
-  const { setSidebarState } = useTree();
+  const { setSidebarState, updatePersonData, showToast } = useTree();
   const node = sidebarState.selectedNode?.nodeRef;
   if (!node) return null;
 
@@ -86,6 +87,26 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
               })
             }
           />
+
+          <h4>Profile Picture</h4>
+          <ImageUpload
+            currentImage={node.personData.profilePicture}
+            onImageChange={(newImage) => {
+              updatePersonData(node, {
+                ...node.personData,
+                profilePicture: newImage,
+              });
+            }}
+            onImageDelete={() => {
+              updatePersonData(node, {
+                ...node.personData,
+                profilePicture: undefined,
+              });
+            }}
+            onShowToast={(message, type) => {
+              showToast(message, type);
+            }}
+          />
         </div>
         {/* <div className="debug-info">
           <div>
@@ -94,9 +115,9 @@ export default function Sidebar({ sidebarState }: SidebarProps) {
           <div>MOD: {node.mod}</div>
         </div> */}
         <div className="sidebar-footer">
-          <a 
-            href="https://suryacodes.com" 
-            target="_blank" 
+          <a
+            href="https://suryacodes.com"
+            target="_blank"
             rel="noopener noreferrer"
             className="sidebar-credit"
           >

@@ -440,6 +440,30 @@ export class TreeNode {
       if (dataFields.length > 0) {
         s += '|' + dataFields.join('|');
       }
+
+      // Add spouse person data with $ separator (prefix with s_)
+      if (n.spouse !== null) {
+        const spouseFields: string[] = [];
+        if (n.spouse.personData?.nickname)
+          spouseFields.push(`s_nick=${n.spouse.personData.nickname}`);
+        if (n.spouse.personData?.birthDate)
+          spouseFields.push(`s_birth=${n.spouse.personData.birthDate}`);
+        if (n.spouse.personData?.deathDate)
+          spouseFields.push(`s_death=${n.spouse.personData.deathDate}`);
+        if (n.spouse.personData?.occupation)
+          spouseFields.push(`s_occ=${n.spouse.personData.occupation}`);
+        if (n.spouse.personData?.location)
+          spouseFields.push(`s_loc=${n.spouse.personData.location}`);
+        if (n.spouse.personData?.bio)
+          spouseFields.push(`s_bio=${n.spouse.personData.bio}`);
+        if (n.spouse.personData?.profilePicture)
+          spouseFields.push(`s_pic=${n.spouse.personData.profilePicture}`);
+
+        if (spouseFields.length > 0) {
+          s += '|' + spouseFields.join('|');
+        }
+      }
+
       s += ':::'; // Use ::: as separator instead of comma
 
       for (const child of n.children) {
@@ -472,6 +496,7 @@ export class TreeNode {
 
       // Parse person data fields
       const personData: PersonData = {};
+      const spousePersonData: PersonData = {};
       for (let j = 1; j < parts.length; j++) {
         const [key, ...valueParts] = parts[j].split('=');
         const value = valueParts.join('='); // Handle = in values
@@ -482,11 +507,27 @@ export class TreeNode {
         else if (key === 'loc') personData.location = value;
         else if (key === 'bio') personData.bio = value;
         else if (key === 'pic') personData.profilePicture = value;
+        // Spouse person data (prefixed with s_)
+        else if (key === 's_nick') spousePersonData.nickname = value;
+        else if (key === 's_birth') spousePersonData.birthDate = value;
+        else if (key === 's_death') spousePersonData.deathDate = value;
+        else if (key === 's_occ') spousePersonData.occupation = value;
+        else if (key === 's_loc') spousePersonData.location = value;
+        else if (key === 's_bio') spousePersonData.bio = value;
+        else if (key === 's_pic') spousePersonData.profilePicture = value;
       }
 
       const spouseNode =
         spouseName !== null
-          ? new TreeNode(spouseName, [], null, {}, spouseUUID!)
+          ? new TreeNode(
+              spouseName,
+              [],
+              null,
+              Object.keys(spousePersonData).length > 0
+                ? spousePersonData
+                : {},
+              spouseUUID!,
+            )
           : null;
 
       const node = new TreeNode(
@@ -522,6 +563,7 @@ export class TreeNode {
       personData: PersonData;
       spouse: string | null;
       spouseUUID: string | null;
+      spousePersonData: PersonData | null;
       children: ReturnType<typeof convert>[];
     } {
       return {
@@ -530,6 +572,7 @@ export class TreeNode {
         personData: n.personData,
         spouse: n?.spouse?.name || null,
         spouseUUID: n?.spouse?.uuid || null,
+        spousePersonData: n?.spouse?.personData || null,
         children: n?.children.map(convert) || [],
       };
     }
@@ -548,7 +591,7 @@ export class TreeNode {
           obj.spouse,
           [],
           null,
-          {},
+          obj.spousePersonData || {},
           obj.spouseUUID,
         );
         spouseNode.isSpouse = true;
